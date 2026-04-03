@@ -9,6 +9,16 @@ from app.schemas.material import MaterialCreate, MaterialOut, MaterialUpdate
 from app.services.material_service import MaterialService
 
 router = APIRouter(prefix="/materiales", tags=["Materiales"])
+legacy_router = APIRouter(tags=["Materials (legacy)"])
+
+
+@router.post("", response_model=MaterialOut, status_code=status.HTTP_201_CREATED)
+@legacy_router.post("/materials", response_model=MaterialOut, status_code=status.HTTP_201_CREATED)
+def create_material(
+    payload: MaterialCreate,
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.INVENTARIO)),
+):
 
 
 @router.post("", response_model=MaterialOut, status_code=status.HTTP_201_CREATED)
@@ -25,6 +35,11 @@ def create_material(
 
 
 @router.get("", response_model=list[MaterialOut])
+@legacy_router.get("/materials", response_model=list[MaterialOut])
+def list_materiales(
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO, RoleEnum.DOCTOR)),
+):
 def list_materiales(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR, RoleEnum.SOLICITANTE)),
@@ -38,6 +53,8 @@ def update_material(
     material_id: int,
     payload: MaterialUpdate,
     db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.INVENTARIO)),
+):
     _: Usuario = Depends(require_roles(RoleEnum.OPERADOR)),
 ):
     """Ejemplo: actualización de datos del material."""

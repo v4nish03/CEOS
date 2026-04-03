@@ -2,6 +2,10 @@ from enum import Enum
 
 
 class RoleEnum(str, Enum):
+    SUPERADMIN = "SUPERADMIN"
+    ADMIN = "ADMIN"
+    INVENTARIO = "INVENTARIO"
+    DOCTOR = "DOCTOR"
     ADMIN = "ADMIN"
     OPERADOR = "OPERADOR"
     SOLICITANTE = "SOLICITANTE"

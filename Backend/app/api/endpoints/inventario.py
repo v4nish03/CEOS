@@ -9,6 +9,16 @@ from app.schemas.inventario import AlertaOut, MovimientoCreate, MovimientoOut
 from app.services.inventario_service import InventarioService
 
 router = APIRouter(prefix="/inventario", tags=["Inventario"])
+legacy_router = APIRouter(tags=["Movements (legacy)"])
+
+
+@router.post("/movimientos", response_model=MovimientoOut, status_code=status.HTTP_201_CREATED)
+@legacy_router.post("/movements", response_model=MovimientoOut, status_code=status.HTTP_201_CREATED)
+def registrar_movimiento(
+    payload: MovimientoCreate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(require_roles(RoleEnum.INVENTARIO)),
+):
 
 
 @router.post("/movimientos", response_model=MovimientoOut, status_code=status.HTTP_201_CREATED)
@@ -33,6 +43,8 @@ def registrar_movimiento(
 @router.get("/movimientos", response_model=list[MovimientoOut])
 def listar_movimientos(
     db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
+):
     _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
 ):
     """Ejemplo: consulta histórica de movimientos."""
@@ -42,6 +54,8 @@ def listar_movimientos(
 @router.get("/alertas", response_model=list[AlertaOut])
 def listar_alertas(
     db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
+):
     _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
 ):
     """Ejemplo: alertas por stock bajo y productos por vencer."""

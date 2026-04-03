@@ -8,6 +8,7 @@ from app.database.session import get_db
 from app.models.enums import RoleEnum
 from app.models.usuario import Usuario
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 

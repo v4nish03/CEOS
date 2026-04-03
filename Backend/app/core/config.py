@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,6 +12,12 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
 
     database_url: str = "sqlite:///./ceos.db"
+    expiration_alert_days: int = 30
+
+    # Seeder inicial (solo backend)
+    bootstrap_superadmin_email: str = "superadmin@ceos.local"
+    bootstrap_superadmin_password: str = "ChangeMe123!"
+    bootstrap_superadmin_name: str = "Super Admin"
 
     # Días previos al vencimiento para alertar
     expiration_alert_days: int = 30

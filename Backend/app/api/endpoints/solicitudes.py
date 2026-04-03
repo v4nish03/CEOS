@@ -15,6 +15,8 @@ router = APIRouter(prefix="/solicitudes", tags=["Solicitudes"])
 def crear_solicitud(
     payload: SolicitudCreate,
     db: Session = Depends(get_db),
+    current_user: Usuario = Depends(require_roles(RoleEnum.DOCTOR)),
+):
     current_user: Usuario = Depends(require_roles(RoleEnum.SOLICITANTE)),
 ):
     """Ejemplo: un SOLICITANTE crea una solicitud de material."""
@@ -27,6 +29,8 @@ def crear_solicitud(
 @router.get("", response_model=list[SolicitudOut])
 def listar_solicitudes(
     db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
+):
     _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
 ):
     """Ejemplo: listado de solicitudes para revisión."""
@@ -38,6 +42,8 @@ def cambiar_estado_solicitud(
     solicitud_id: int,
     payload: SolicitudEstadoUpdate,
     db: Session = Depends(get_db),
+    current_user: Usuario = Depends(require_roles(RoleEnum.INVENTARIO)),
+):
     current_user: Usuario = Depends(require_roles(RoleEnum.OPERADOR)),
 ):
     """Ejemplo: OPERADOR aprueba/rechaza solicitud."""
