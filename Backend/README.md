@@ -37,6 +37,16 @@ source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
+
+
+## Carga masiva sintética y estimación de espacio
+
+```bash
+cd Backend
+python scripts/bulk_seed_estimate.py --materials 500 --users 40 --movements 50000 --solicitudes 10000 --reset
+```
+
+El script sirve para poblar datos de prueba según cantidad y reporta espacio usado en la base.
 # CEOS - Backend de Inventario para Clínica Dental
 
 Backend completo con **FastAPI + SQLAlchemy + JWT**, organizado por capas para escalar y mantener.
