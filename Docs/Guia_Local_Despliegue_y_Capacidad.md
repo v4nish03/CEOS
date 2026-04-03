@@ -2,6 +2,23 @@
 
 > Fecha de elaboración: **2026-04-03**.
 
+
+## 0) Limpieza de datos y carga sintética
+
+- Se removió `Backend/test.db` del repositorio para evitar dejar datos persistidos versionados.
+- Para poblar datos de prueba de forma controlada, usa:
+
+```bash
+cd Backend
+python scripts/bulk_seed_estimate.py --materials 2000 --users 120 --movements 300000 --solicitudes 80000 --reset
+```
+
+El script imprime:
+- cantidad de filas insertadas
+- tamaño antes/después de la base
+- delta de espacio
+- densidad aproximada por cada 1,000 filas
+
 ## 1) Cómo ejecutar el backend en local (FastAPI)
 
 ### Requisitos
