@@ -1,0 +1,44 @@
+## Analisis de requerimientos para el Sistema CEOS
+
+* Conversacion
+Un sistema para la clinica CEOS con el proposito
+
+Posible pagian web donde los pacientes puedan realizar sus agendas y reprogramaciones de los clientes.
+
+Ver como usar el sistema de historial con hojas fisicas y digital.
+
+Control de material, estilo inventario, 
+
+## Invetario
+Contorl total de material mas informes de fecha de vencimiento(como registrar o guardar mas avisos)
+
+## Inventario
+Aplicacion en donde se tendra un control del material de que abise lo que falta y lo que esta por vencer.
+
+Ingreso es a mano, en el sistema se ingresara los datso del material con fecha de ingreso, nombre del material, fecha de caducidad, fecha de salida y quien saca el material, posibles categorias, tubos,
+
+Control de material de cada Usuario y tambien uno general de todos acumulados.
+Generar reportes diarios, te puede mandar un pdf y enviartelo a una hora en especial.
+Ellos ingresan los stocks y eligen el minimo(por defecto 5), y ponen la fecha de alerta de vencimiento 
+
+Dashboard de materiales mas salidos.
+
+Que los usuarios soliciten tales stock que no son usados frecuentemente.
+
+Ingreso de dinero gastado
+
+Con roles de usuario, para cada tipo de uso, uno solo registro, otro solo ver y asi xd.
+
+Roles de usuario
+1. Administrador(Que no modifique el inventario) llegando alertas de posible caducidad
+2. Quien registra entrada y salida (solo modifica) llegando alertas de posible caducidad
+3. Salida de material, opciones de solicitud, no hay en stock pero pueden pedir para comprar.
+
+Respaldo de tu base de datos.
+
+Investigar si el biometrico puede mandar una senal al equipo, que marca igual el biometrico.
+
+## POSIBLE OPCION
+Capturar promocines de ventas de productos, posible pagina de odontologos donde este registrado las ofertas.
+
+# Posible tiempo de desarrollo 4 meses
