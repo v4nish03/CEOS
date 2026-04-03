@@ -1,14 +1,3 @@
-from fastapi import FastAPI
-from database.base import Base
-from database.session import engine
-from routers import material
-from routers import movimiento
+from app.main import app
 
-
-
-
-
-app = FastAPI()
-app.include_router(material.router)
-app.include_router(movimiento.router)
-Base.metadata.create_all(bind=engine)
+__all__ = ["app"]
