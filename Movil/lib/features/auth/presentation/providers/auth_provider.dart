@@ -36,8 +36,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final session = await _loginUseCase(email, password);
       state = state.copyWith(session: session, loading: false);
-    } catch (_) {
-      state = state.copyWith(loading: false, error: 'No se pudo iniciar sesión');
+    } catch (e) {
+      print('LOGIN ERROR: $e');
+      state = state.copyWith(loading: false, error: 'Error: $e');
     }
   }
 

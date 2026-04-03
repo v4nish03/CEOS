@@ -5,9 +5,6 @@ from app.core.security import create_access_token, get_password_hash, verify_pas
 from app.models.enums import RoleEnum
 from app.models.usuario import Usuario
 from app.schemas.usuario import UsuarioCreateByAdmin
-from app.core.security import create_access_token, get_password_hash, verify_password
-from app.models.usuario import Usuario
-from app.schemas.usuario import UsuarioCreate
 
 
 class AuthService:
@@ -34,7 +31,6 @@ class AuthService:
         if actor.rol == RoleEnum.ADMIN and payload.rol == RoleEnum.SUPERADMIN:
             raise ValueError("ADMIN no puede crear SUPERADMIN")
 
-    def register_user(db: Session, payload: UsuarioCreate) -> Usuario:
         exists = db.query(Usuario).filter(Usuario.email == payload.email).first()
         if exists:
             raise ValueError("Ya existe un usuario con ese email")
@@ -57,8 +53,3 @@ class AuthService:
             raise ValueError("Credenciales inválidas")
         token = create_access_token(subject=user.id, extra_claims={"role": user.rol.value, "name": user.nombre})
         return token, user
-    def login(db: Session, email: str, password: str) -> str:
-        user = db.query(Usuario).filter(Usuario.email == email).first()
-        if not user or not verify_password(password, user.hashed_password):
-            raise ValueError("Credenciales inválidas")
-        return create_access_token(subject=user.id)

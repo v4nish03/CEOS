@@ -17,17 +17,9 @@ legacy_router = APIRouter(tags=["Movements (legacy)"])
 def registrar_movimiento(
     payload: MovimientoCreate,
     db: Session = Depends(get_db),
-    current_user: Usuario = Depends(require_roles(RoleEnum.INVENTARIO)),
+    current_user: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
 ):
-
-
-@router.post("/movimientos", response_model=MovimientoOut, status_code=status.HTTP_201_CREATED)
-def registrar_movimiento(
-    payload: MovimientoCreate,
-    db: Session = Depends(get_db),
-    current_user: Usuario = Depends(require_roles(RoleEnum.OPERADOR)),
-):
-    """Ejemplo: registra entrada/salida/ajuste y actualiza stock automáticamente."""
+    """Registra entrada/salida/ajuste y actualiza stock automáticamente."""
     try:
         return InventarioService.registrar_movimiento(
             db=db,
@@ -45,9 +37,7 @@ def listar_movimientos(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
 ):
-    _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
-):
-    """Ejemplo: consulta histórica de movimientos."""
+    """Consulta histórica de movimientos."""
     return InventarioService.listar_movimientos(db)
 
 
@@ -56,7 +46,5 @@ def listar_alertas(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
 ):
-    _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
-):
-    """Ejemplo: alertas por stock bajo y productos por vencer."""
+    """Alertas por stock bajo y materiales por vencer."""
     return InventarioService.obtener_alertas(db)

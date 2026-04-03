@@ -8,8 +8,8 @@ from app.database.session import get_db
 from app.models.enums import RoleEnum
 from app.models.usuario import Usuario
 
+# tokenUrl apunta al endpoint principal de login
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> Usuario:

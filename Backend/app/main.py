@@ -6,8 +6,6 @@ from app.database.base import Base
 from app.database.session import SessionLocal, engine
 from app.models import material, movimiento, solicitud, usuario  # noqa: F401
 from app.services.auth_service import AuthService
-from app.database.session import engine
-from app.models import material, movimiento, solicitud, usuario  # noqa: F401
 
 settings = get_settings()
 
@@ -17,7 +15,7 @@ app.include_router(api_router, prefix=settings.api_v1_prefix)
 
 @app.on_event("startup")
 def startup_event() -> None:
-    # Para simplificar el arranque en entorno local sin migraciones.
+    # Crea tablas y garantiza que exista el SUPERADMIN inicial.
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
@@ -29,10 +27,3 @@ def startup_event() -> None:
 @app.get("/")
 def root():
     return {"message": "CEOS Inventory API running"}
-@app.get("/")
-def root():
-    return {"message": "CEOS Inventory API running"}
-
-
-# Para simplificar el arranque en entorno local sin migraciones.
-Base.metadata.create_all(bind=engine)
