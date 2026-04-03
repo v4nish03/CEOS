@@ -18,11 +18,13 @@ def get_password_hash(password: str) -> str:
 
 
 def create_access_token(subject: str | Any, expires_delta: timedelta | None = None, extra_claims: dict | None = None) -> str:
+def create_access_token(subject: str | Any, expires_delta: timedelta | None = None) -> str:
     settings = get_settings()
     expire = datetime.now(timezone.utc) + (
         expires_delta or timedelta(minutes=settings.access_token_expire_minutes)
     )
     to_encode = {"exp": expire, "sub": str(subject), **(extra_claims or {})}
+    to_encode = {"exp": expire, "sub": str(subject)}
     return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
 
 

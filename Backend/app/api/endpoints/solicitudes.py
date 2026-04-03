@@ -17,6 +17,9 @@ def crear_solicitud(
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(require_roles(RoleEnum.DOCTOR)),
 ):
+    current_user: Usuario = Depends(require_roles(RoleEnum.SOLICITANTE)),
+):
+    """Ejemplo: un SOLICITANTE crea una solicitud de material."""
     try:
         return SolicitudService.crear(db, payload, solicitante_id=current_user.id)
     except ValueError as exc:
@@ -28,6 +31,9 @@ def listar_solicitudes(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
 ):
+    _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
+):
+    """Ejemplo: listado de solicitudes para revisión."""
     return SolicitudService.listar(db)
 
 
@@ -38,6 +44,9 @@ def cambiar_estado_solicitud(
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(require_roles(RoleEnum.INVENTARIO)),
 ):
+    current_user: Usuario = Depends(require_roles(RoleEnum.OPERADOR)),
+):
+    """Ejemplo: OPERADOR aprueba/rechaza solicitud."""
     try:
         return SolicitudService.cambiar_estado(
             db,

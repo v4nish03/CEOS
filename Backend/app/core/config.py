@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     bootstrap_superadmin_password: str = "ChangeMe123!"
     bootstrap_superadmin_name: str = "Super Admin"
 
+    # Días previos al vencimiento para alertar
+    expiration_alert_days: int = 30
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False)
 
 
