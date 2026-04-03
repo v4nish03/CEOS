@@ -19,6 +19,15 @@ def create_material(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.INVENTARIO)),
 ):
+
+
+@router.post("", response_model=MaterialOut, status_code=status.HTTP_201_CREATED)
+def create_material(
+    payload: MaterialCreate,
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.OPERADOR)),
+):
+    """Ejemplo: alta de material para inventario."""
     try:
         return MaterialService.create(db, payload)
     except ValueError as exc:
@@ -31,6 +40,11 @@ def list_materiales(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO, RoleEnum.DOCTOR)),
 ):
+def list_materiales(
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR, RoleEnum.SOLICITANTE)),
+):
+    """Ejemplo: listar materiales disponibles."""
     return MaterialService.list_all(db)
 
 
@@ -41,6 +55,9 @@ def update_material(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.INVENTARIO)),
 ):
+    _: Usuario = Depends(require_roles(RoleEnum.OPERADOR)),
+):
+    """Ejemplo: actualización de datos del material."""
     try:
         return MaterialService.update(db, material_id, payload)
     except ValueError as exc:

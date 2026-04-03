@@ -19,6 +19,9 @@ def reporte_movimientos(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
 ):
+    _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
+):
+    """Ejemplo: reporte detallado de movimientos de inventario."""
     return InventarioService.listar_movimientos(db)
 
 
@@ -29,6 +32,12 @@ def reporte_materiales_mas_usados(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
 ):
+def reporte_materiales_mas_usados(
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
+):
+    """Ejemplo: ranking de materiales con mayor salida."""
     return ReporteService.materiales_mas_usados(db, limit=limit)
 
 
@@ -37,4 +46,7 @@ def resumen_inventario(
     db: Session = Depends(get_db),
     _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
 ):
+    _: Usuario = Depends(require_roles(RoleEnum.ADMIN, RoleEnum.OPERADOR)),
+):
+    """Ejemplo: resumen global de inventario."""
     return ReporteService.resumen_inventario(db)

@@ -6,6 +6,8 @@ from app.database.base import Base
 from app.database.session import SessionLocal, engine
 from app.models import material, movimiento, solicitud, usuario  # noqa: F401
 from app.services.auth_service import AuthService
+from app.database.session import engine
+from app.models import material, movimiento, solicitud, usuario  # noqa: F401
 
 settings = get_settings()
 
@@ -27,3 +29,10 @@ def startup_event() -> None:
 @app.get("/")
 def root():
     return {"message": "CEOS Inventory API running"}
+@app.get("/")
+def root():
+    return {"message": "CEOS Inventory API running"}
+
+
+# Para simplificar el arranque en entorno local sin migraciones.
+Base.metadata.create_all(bind=engine)

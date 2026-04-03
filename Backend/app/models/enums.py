@@ -6,6 +6,9 @@ class RoleEnum(str, Enum):
     ADMIN = "ADMIN"
     INVENTARIO = "INVENTARIO"
     DOCTOR = "DOCTOR"
+    ADMIN = "ADMIN"
+    OPERADOR = "OPERADOR"
+    SOLICITANTE = "SOLICITANTE"
 
 
 class TipoMovimientoEnum(str, Enum):
