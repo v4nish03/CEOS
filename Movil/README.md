@@ -20,3 +20,7 @@ Edita `lib/core/constants/app_constants.dart` y cambia `baseUrl` a la URL de tu 
 - Navegación: GoRouter.
 - Cliente HTTP: Dio.
 - JWT en almacenamiento seguro: flutter_secure_storage.
+
+## Estado actual de vistas
+Las vistas móviles fueron deshabilitadas temporalmente para reiniciar desarrollo.
+Revisa `ESTRUCTURA_MOVIL.md` para la guía de trabajo por carpetas y flujo recomendado.
