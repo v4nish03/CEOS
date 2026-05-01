@@ -26,10 +26,10 @@ class InventoryScreen extends ConsumerWidget {
               final item = items[i];
               return MaterialCard(
                 material: item,
-                onEntrada: auth?.role == UserRole.inventario
+                onEntrada: auth != null && (auth.role == UserRole.inventario || auth.role == UserRole.admin || auth.role == UserRole.superadmin)
                     ? () => _register(context, ref, item.id, 'entrada')
                     : null,
-                onSalida: auth?.role == UserRole.inventario
+                onSalida: auth != null && (auth.role == UserRole.inventario || auth.role == UserRole.admin || auth.role == UserRole.superadmin)
                     ? () => _register(context, ref, item.id, 'salida')
                     : null,
               );
