@@ -27,7 +27,14 @@ Ejecuta este script para validar que el backend responde correctamente a la app 
 
 ```bash
 cd Movil
-BASE_URL="http://<TU_IP>:8000/api/v1" SUPERADMIN_EMAIL="superadmin@ceos.local" SUPERADMIN_PASSWORD="..." ADMIN_EMAIL="admin@ceos.local" ADMIN_PASSWORD="..." INVENTARIO_EMAIL="inventario@ceos.local" INVENTARIO_PASSWORD="..." DOCTOR_EMAIL="doctor@ceos.local" DOCTOR_PASSWORD="..." ./scripts/validate_mobile_backend.sh
+BASE_URL="http://<TU_IP>:8000/api/v1" SUPERADMIN_EMAIL="superadmin@ceos.local" SUPERADMIN_PASSWORD="..." ADMIN_EMAIL="admin@ceos.local" ADMIN_PASSWORD="..." INVENTARIO_EMAIL="inventario@ceos.local" INVENTARIO_PASSWORD="..." DOCTOR_EMAIL="doctor@ceos.local" DOCTOR_PASSWORD="..." RUN_WRITE_TESTS="0" ./scripts/validate_mobile_backend.sh
 ```
 
 Si no tienes todas las credenciales, el script omite automáticamente el rol faltante.
+
+
+Para pruebas de escritura (movimientos y solicitudes), activa:
+
+```bash
+RUN_WRITE_TESTS="1" TEST_MATERIAL_ID="1" TEST_SOLICITUD_MATERIAL_ID="1" ./scripts/validate_mobile_backend.sh
+```
