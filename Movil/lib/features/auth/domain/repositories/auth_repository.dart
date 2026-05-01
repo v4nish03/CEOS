@@ -1,7 +1,9 @@
-import 'package:ceos/features/auth/domain/entities/auth_session.dart';
+import '../entities/user_entity.dart';
 
 abstract class AuthRepository {
-  Future<AuthSession> login(String email, String password);
-  Future<AuthSession?> restoreSession();
-  Future<void> logout();
+  // Define la acción de login y qué esperamos de vuelta
+  Future<UserEntity> login(String email, String password);
+  
+  // Para el bootstrap: valida el token actual [cite: 43]
+  Future<UserEntity> checkAuthStatus(String token);
 }

@@ -1,7 +1,6 @@
-import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -11,54 +10,102 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _email = TextEditingController();
-  final _password = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
+
+  void _handleLogin() async {
+    try {
+      await ref.read(authProvider.notifier).login(
+            _emailController.text.trim(),
+            _passwordController.text.trim(),
+          );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final auth = ref.watch(authNotifierProvider);
-
-    ref.listen(authNotifierProvider, (_, next) {
-      if (next.session != null) {
-        context.go('/dashboard');
-      }
-    });
+    final authState = ref.watch(authProvider);
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('CEOS', style: Theme.of(context).textTheme.headlineMedium),
-                  const SizedBox(height: 16),
-                  TextField(controller: _email, decoration: const InputDecoration(labelText: 'Email')),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _password,
-                    obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Password'),
-                  ),
-                  const SizedBox(height: 20),
-                  if (auth.error != null) Text(auth.error!, style: const TextStyle(color: Colors.red)),
-                  const SizedBox(height: 8),
-                  FilledButton(
-                    onPressed: auth.loading
-                        ? null
-                        : () => ref
-                            .read(authNotifierProvider.notifier)
-                            .login(_email.text.trim(), _password.text.trim()),
-                    child: auth.loading
-                        ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Text('Iniciar sesión'),
-                  ),
-                ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 60),
+              // Logo pequeño para reforzar identidad
+              Center(
+                child: Icon(
+                  Icons.local_hospital_rounded,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
-            ),
+              const SizedBox(height: 40),
+              Text('Bienvenido', style: textTheme.displayLarge),
+              Text(
+                'Inicia sesión para gestionar el inventario',
+                style: textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 40),
+              
+              // Campo de Email
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Correo Electrónico',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              // Campo de Password
+              TextField(
+                controller: _passwordController,
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: 'Contraseña',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              
+              // Botón de Acción
+              authState.status == AuthStatus.checking
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: _handleLogin,
+                      child: const Text('INGRESAR'),
+                    ),
+              
+              const SizedBox(height: 20),
+              Center(
+                child: TextButton(
+                  onPressed: () {}, // Lógica de recuperación opcional
+                  child: Text(
+                    '¿Olvidaste tu contraseña?',
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

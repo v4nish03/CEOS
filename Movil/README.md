@@ -38,3 +38,6 @@ Para pruebas de escritura (movimientos y solicitudes), activa:
 ```bash
 RUN_WRITE_TESTS="1" TEST_MATERIAL_ID="1" TEST_SOLICITUD_MATERIAL_ID="1" ./scripts/validate_mobile_backend.sh
 ```
+## Estado actual de vistas
+Las vistas móviles fueron deshabilitadas temporalmente para reiniciar desarrollo.
+Revisa `ESTRUCTURA_MOVIL.md` para la guía de trabajo por carpetas y flujo recomendado.
