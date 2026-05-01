@@ -1,16 +1,10 @@
 import 'package:ceos/core/network/dio_client.dart';
 import 'package:ceos/features/auth/domain/entities/auth_session.dart';
 import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
+import 'package:ceos/core/widgets/work_in_progress_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final reportsProvider = FutureProvider<List<dynamic>>((ref) async {
-  final dio = ref.watch(dioProvider);
-  final response = await dio.get('/reportes/materiales-mas-usados');
-  return response.data as List<dynamic>;
-});
-
-class ReportsScreen extends ConsumerWidget {
+class ReportsScreen extends StatelessWidget {
   const ReportsScreen({super.key});
 
   @override
@@ -47,6 +41,11 @@ class ReportsScreen extends ConsumerWidget {
           );
         },
       ),
+  Widget build(BuildContext context) {
+    return const WorkInProgressView(
+      title: 'Reportes',
+      description:
+          'La vista de reportes está en pausa. Reemplaza este placeholder por nuevas gráficas/listados cuando se retome el módulo.',
     );
   }
 }

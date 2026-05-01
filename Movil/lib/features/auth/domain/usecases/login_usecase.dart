@@ -1,11 +1,16 @@
-import 'package:ceos/features/auth/domain/entities/auth_session.dart';
-import 'package:ceos/features/auth/domain/repositories/auth_repository.dart';
+import '../entities/user_entity.dart';
+import '../repositories/auth_repository.dart';
 
 class LoginUseCase {
-  const LoginUseCase(this.repository);
-  final AuthRepository repository;
+  final AuthRepository _repository;
 
-  Future<AuthSession> call(String email, String password) {
-    return repository.login(email, password);
+  LoginUseCase(this._repository);
+
+  /// Ejecuta la lógica de autenticación [cite: 39]
+  Future<UserEntity> execute(String email, String password) async {
+    // Aquí podrías agregar validaciones de formato antes de llamar al repo
+    if (!email.contains('@')) throw Exception('Email no válido');
+    
+    return await _repository.login(email, password);
   }
 }
