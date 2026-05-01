@@ -2,10 +2,10 @@ import 'package:ceos/core/network/dio_client.dart';
 import 'package:ceos/features/auth/domain/entities/auth_session.dart';
 import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
 import 'package:ceos/features/users/presentation/providers/users_provider.dart';
+import 'package:ceos/core/widgets/work_in_progress_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UsersScreen extends ConsumerWidget {
+class UsersScreen extends StatelessWidget {
   const UsersScreen({super.key});
 
   @override
@@ -98,6 +98,11 @@ class UsersScreen extends ConsumerWidget {
           ],
         ),
       ),
+  Widget build(BuildContext context) {
+    return const WorkInProgressView(
+      title: 'Usuarios',
+      description:
+          'La gestión de usuarios móvil fue removida temporalmente. Este archivo queda como punto de entrada para la nueva versión.',
     );
   }
 }

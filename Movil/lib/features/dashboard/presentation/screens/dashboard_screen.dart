@@ -1,10 +1,7 @@
-import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
-import 'package:ceos/features/dashboard/presentation/providers/dashboard_provider.dart';
-import 'package:ceos/features/dashboard/presentation/widgets/role_menu.dart';
+import 'package:ceos/core/widgets/work_in_progress_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
@@ -56,6 +53,11 @@ class DashboardScreen extends ConsumerWidget {
           },
         ),
       ),
+  Widget build(BuildContext context) {
+    return const WorkInProgressView(
+      title: 'Dashboard',
+      description:
+          'Vista de dashboard deshabilitada. Mantén este archivo para reactivar los widgets de resumen cuando reinicie el desarrollo móvil.',
     );
   }
 }
