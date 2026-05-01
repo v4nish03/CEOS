@@ -17,14 +17,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isChecking = authState.status == AuthStatus.checking;
       final isLoggedIn = authState.status == AuthStatus.authenticated;
 
+      final isBootstrap = state.matchedLocation == '/';
+
       // Si está cargando el token, no redirigir aún
       if (isChecking) return null;
 
       // Si no está autenticado y no está en login, mandarlo a login
       if (!isLoggedIn && !isLoggingIn) return '/login';
 
-      // Si ya está autenticado e intenta ir al login, mandarlo al inicio
-      if (isLoggedIn && isLoggingIn) return '/';
+      // Si ya está autenticado y está en login o bootstrap, mandarlo a /main
+      if (isLoggedIn && (isLoggingIn || isBootstrap)) return '/main';
 
       return null;
     },

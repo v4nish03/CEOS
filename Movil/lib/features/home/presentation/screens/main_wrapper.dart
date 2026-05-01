@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/dashboard_view.dart';
+import '../../../auth/presentation/widgets/dashboard_view.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({super.key});

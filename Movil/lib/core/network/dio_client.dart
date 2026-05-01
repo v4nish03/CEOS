@@ -5,7 +5,7 @@ import 'auth_interceptor.dart';
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'TU_URL_DE_BACKEND_AQUÍ', // Cambiar por la URL real
+      baseUrl: 'http://127.0.0.1:8000/api/v1', // Usamos 127.0.0.1 gracias a adb reverse
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       contentType: 'application/json',

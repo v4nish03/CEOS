@@ -24,6 +24,12 @@ class DashboardView extends ConsumerWidget {
             icon: const Icon(Icons.notifications_none_outlined),
             onPressed: () {}, // Punto 3-E: Alertas
           ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              ref.read(authProvider.notifier).logout();
+            },
+          ),
         ],
       ),
       body: Padding(

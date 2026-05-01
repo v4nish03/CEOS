@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Paleta de Colores Principal
-  static const Color primary = Color(0 migratory: 0xFF1A535C); // Verde Petróleo
+  static const Color primary = Color(0xFF1A535C); // Verde Petróleo
   static const Color secondary = Color(0xFF4ECDC4); // Turquesa
   static const Color background = Color(0xFFF7FFF7); // Blanco Menta
   static const Color accent = Color(0xFFFF6B6B); // Coral (Alertas/Error)
@@ -86,7 +86,7 @@ class AppTheme {
       ),
 
       // Estilo de las Cards (Inventario)
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 2,
         shadowColor: primary.withOpacity(0.1),
