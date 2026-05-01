@@ -1,4 +1,6 @@
 import 'package:ceos/core/network/dio_client.dart';
+import 'package:ceos/features/auth/domain/entities/auth_session.dart';
+import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,6 +15,16 @@ class ReportsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(authNotifierProvider).session;
+    final canView = session != null &&
+        (session.role == UserRole.superadmin || session.role == UserRole.admin || session.role == UserRole.inventario);
+
+    if (!canView) {
+      return const Scaffold(
+        body: Center(child: Text('Tu rol no tiene acceso a reportes.')),
+      );
+    }
+
     final reports = ref.watch(reportsProvider);
 
     return Scaffold(
