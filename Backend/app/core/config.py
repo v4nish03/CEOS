@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
 
-    database_url: str = "sqlite:///./ceos.db"
+    database_url: str = "postgresql+psycopg2://ceos:ceos@localhost:5432/ceos"
 
     # Días previos al vencimiento para emitir alerta
     expiration_alert_days: int = 30
