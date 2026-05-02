@@ -1,4 +1,6 @@
 import 'package:ceos/core/network/dio_client.dart';
+import 'package:ceos/features/auth/domain/entities/auth_session.dart';
+import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
 import 'package:ceos/features/users/presentation/providers/users_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,12 +10,21 @@ class UsersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(authNotifierProvider).session;
+    final canManage = session != null && (session.role == UserRole.superadmin || session.role == UserRole.admin);
+
+    if (!canManage) {
+      return const Scaffold(
+        body: Center(child: Text('Tu rol no tiene acceso a gestión de usuarios.')),
+      );
+    }
+
     final users = ref.watch(usersProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Gestión de usuarios')),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showCreateUser(context, ref),
+        onPressed: () => _showCreateUser(context, ref, session.role),
         icon: const Icon(Icons.person_add_alt_1),
         label: const Text('Crear'),
       ),
@@ -38,11 +49,15 @@ class UsersScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _showCreateUser(BuildContext context, WidgetRef ref) async {
+  Future<void> _showCreateUser(BuildContext context, WidgetRef ref, UserRole currentRole) async {
     final name = TextEditingController();
     final email = TextEditingController();
     final pass = TextEditingController();
     var role = 'DOCTOR';
+
+    final roles = currentRole == UserRole.superadmin
+        ? const ['ADMIN', 'INVENTARIO', 'DOCTOR', 'SUPERADMIN']
+        : const ['ADMIN', 'INVENTARIO', 'DOCTOR'];
 
     await showDialog<void>(
       context: context,
@@ -58,9 +73,7 @@ class UsersScreen extends ConsumerWidget {
                 TextField(controller: pass, decoration: const InputDecoration(labelText: 'Password')),
                 DropdownButtonFormField<String>(
                   value: role,
-                  items: const ['ADMIN', 'INVENTARIO', 'DOCTOR']
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
+                  items: roles.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                   onChanged: (v) => setState(() => role = v ?? 'DOCTOR'),
                 ),
               ],
