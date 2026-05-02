@@ -1,108 +1,98 @@
-import 'package:ceos/core/network/dio_client.dart';
-import 'package:ceos/features/auth/domain/entities/auth_session.dart';
-import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
-import 'package:ceos/features/users/presentation/providers/users_provider.dart';
-import 'package:ceos/core/widgets/work_in_progress_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/users_provider.dart';
+import '../widgets/user_card.dart';
+import '../widgets/user_form_modal.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
-class UsersScreen extends StatelessWidget {
+class UsersScreen extends ConsumerWidget {
   const UsersScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final session = ref.watch(authNotifierProvider).session;
-    final canManage = session != null && (session.role == UserRole.superadmin || session.role == UserRole.admin);
+    final usersAsync = ref.watch(usersProvider);
+    final session = ref.watch(authProvider);
+    
+    // Solo ADMIN y SUPERADMIN deberían poder ver esta vista, 
+    // pero igual la protegemos visualmente por si acaso.
+    final role = session.role ?? 'DOCTOR';
+    final canManage = role == 'SUPERADMIN' || role == 'ADMIN';
 
     if (!canManage) {
       return const Scaffold(
-        body: Center(child: Text('Tu rol no tiene acceso a gestión de usuarios.')),
+        body: Center(child: Text('Acceso Denegado. Solo administradores.')),
       );
     }
 
-    final users = ref.watch(usersProvider);
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Gestión de usuarios')),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showCreateUser(context, ref, session.role),
-        icon: const Icon(Icons.person_add_alt_1),
-        label: const Text('Crear'),
+      appBar: AppBar(
+        title: const Text('Gestión de Usuarios'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.invalidate(usersProvider),
+          )
+        ],
       ),
-      body: users.when(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showUserForm(context, ref, role),
+        icon: const Icon(Icons.person_add),
+        label: const Text('Nuevo Usuario'),
+      ),
+      body: usersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
-        data: (items) {
-          if (items.isEmpty) return const Center(child: Text('No hay usuarios'));
-          return ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (_, i) {
-              final user = items[i] as Map<String, dynamic>;
-              return ListTile(
-                leading: const Icon(Icons.person_outline),
-                title: Text(user['nombre'].toString()),
-                subtitle: Text('${user['email']} · ${user['rol']}'),
-              );
-            },
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Error al cargar usuarios:\n$error', textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => ref.invalidate(usersProvider),
+                child: const Text('Reintentar'),
+              )
+            ],
+          ),
+        ),
+        data: (users) {
+          if (users.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.people_outline, size: 64, color: Colors.grey.withAlpha(100)),
+                  const SizedBox(height: 16),
+                  const Text('No hay usuarios registrados.', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                ],
+              ),
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: () async => ref.invalidate(usersProvider),
+            child: ListView.separated(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 80),
+              itemCount: users.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                return UserCard(user: users[index]);
+              },
+            ),
           );
         },
       ),
     );
   }
 
-  Future<void> _showCreateUser(BuildContext context, WidgetRef ref, UserRole currentRole) async {
-    final name = TextEditingController();
-    final email = TextEditingController();
-    final pass = TextEditingController();
-    var role = 'DOCTOR';
-
-    final roles = currentRole == UserRole.superadmin
-        ? const ['ADMIN', 'INVENTARIO', 'DOCTOR', 'SUPERADMIN']
-        : const ['ADMIN', 'INVENTARIO', 'DOCTOR'];
-
-    await showDialog<void>(
+  void _showUserForm(BuildContext context, WidgetRef ref, String currentRole) {
+    showModalBottomSheet(
       context: context,
-      builder: (_) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Crear usuario'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(controller: name, decoration: const InputDecoration(labelText: 'Nombre')),
-                TextField(controller: email, decoration: const InputDecoration(labelText: 'Email')),
-                TextField(controller: pass, decoration: const InputDecoration(labelText: 'Password')),
-                DropdownButtonFormField<String>(
-                  value: role,
-                  items: roles.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                  onChanged: (v) => setState(() => role = v ?? 'DOCTOR'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-            FilledButton(
-              onPressed: () async {
-                final dio = ref.read(dioProvider);
-                await dio.post('/usuarios', data: {
-                  'nombre': name.text,
-                  'email': email.text,
-                  'password': pass.text,
-                  'rol': role,
-                });
-                ref.invalidate(usersProvider);
-                if (context.mounted) Navigator.pop(context);
-              },
-              child: const Text('Guardar'),
-            ),
-          ],
-        ),
-      ),
-  Widget build(BuildContext context) {
-    return const WorkInProgressView(
-      title: 'Usuarios',
-      description:
-          'La gestión de usuarios móvil fue removida temporalmente. Este archivo queda como punto de entrada para la nueva versión.',
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => UserFormModal(currentRole: currentRole),
     );
   }
 }

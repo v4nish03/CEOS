@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// ... imports de repo e impl
+import '../../../../core/network/dio_client.dart';
+import '../../domain/entities/material_entity.dart';
+import '../../domain/repositories/inventory_repository.dart';
+import '../../data/repositories/inventory_repository_impl.dart';
 
 final inventoryRepositoryProvider = Provider<InventoryRepository>((ref) {
   // Aquí usamos el Dio que ya tiene el Interceptor de seguridad [cite: 248, 271]

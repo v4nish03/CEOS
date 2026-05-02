@@ -4,6 +4,7 @@ abstract class InventoryRepository {
   // Materiales
   Future<List<MaterialEntity>> getMateriales();
   Future<void> createMaterial(MaterialEntity material);
+  Future<void> updateMaterial(int id, MaterialEntity material);
   
   // Movimientos (Punto 3-D)
   Future<void> registrarMovimiento({

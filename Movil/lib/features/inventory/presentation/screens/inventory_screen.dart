@@ -1,69 +1,110 @@
-import 'package:ceos/core/widgets/work_in_progress_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/inventory_provider.dart';
+import '../widgets/material_card.dart';
+import '../widgets/material_form_modal.dart';
+import '../widgets/movement_form_modal.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../domain/entities/material_entity.dart';
 
-class InventoryScreen extends StatelessWidget {
+class InventoryScreen extends ConsumerWidget {
   const InventoryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(authNotifierProvider).session;
-    final materials = ref.watch(materialsProvider);
+    final materialsAsync = ref.watch(materialsProvider);
+    final role = ref.watch(authProvider).role;
+    // DOCTOR can only view, others can edit
+    final canEdit = role != 'DOCTOR';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Inventario')),
-      body: materials.when(
+      appBar: AppBar(
+        title: const Text('Inventario Médico'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.invalidate(materialsProvider),
+          )
+        ],
+      ),
+      floatingActionButton: canEdit
+          ? FloatingActionButton.extended(
+              onPressed: () => _showMaterialForm(context, ref),
+              icon: const Icon(Icons.add),
+              label: const Text('Nuevo Material'),
+            )
+          : null,
+      body: materialsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
-        data: (items) {
-          if (items.isEmpty) return const Center(child: Text('Sin materiales'));
-          return ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (_, i) {
-              final item = items[i];
-              return MaterialCard(
-                material: item,
-                onEntrada: auth != null && (auth.role == UserRole.inventario || auth.role == UserRole.admin || auth.role == UserRole.superadmin)
-                    ? () => _register(context, ref, item.id, 'entrada')
-                    : null,
-                onSalida: auth != null && (auth.role == UserRole.inventario || auth.role == UserRole.admin || auth.role == UserRole.superadmin)
-                    ? () => _register(context, ref, item.id, 'salida')
-                    : null,
-              );
-            },
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Error al cargar inventario:\n$error', textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => ref.invalidate(materialsProvider),
+                child: const Text('Reintentar'),
+              )
+            ],
+          ),
+        ),
+        data: (materials) {
+          if (materials.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey.withAlpha(100)),
+                  const SizedBox(height: 16),
+                  const Text('No hay materiales registrados.', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                ],
+              ),
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: () async => ref.invalidate(materialsProvider),
+            child: ListView.separated(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 80), // Padding inferior para el FAB
+              itemCount: materials.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final material = materials[index];
+                return MaterialCard(
+                  material: material,
+                  canEdit: canEdit,
+                  onEdit: () => _showMaterialForm(context, ref, material: material),
+                  onMovement: (type) => _showMovementForm(context, ref, material, type),
+                );
+              },
+            ),
           );
         },
       ),
     );
   }
 
-  Future<void> _register(BuildContext context, WidgetRef ref, int materialId, String tipo) async {
-    final controller = TextEditingController();
-    final repository = ref.read(inventoryRepositoryProvider);
-    await showDialog<void>(
+  void _showMaterialForm(BuildContext context, WidgetRef ref, {MaterialEntity? material}) {
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Registrar $tipo'),
-        content: TextField(controller: controller, keyboardType: TextInputType.number),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-          FilledButton(
-            onPressed: () async {
-              final qty = int.tryParse(controller.text) ?? 0;
-              if (qty > 0) {
-                await repository.registerMovement(materialId: materialId, tipo: tipo, cantidad: qty);
-                ref.invalidate(materialsProvider);
-              }
-              if (context.mounted) Navigator.pop(context);
-            },
-            child: const Text('Guardar'),
-          ),
-        ],
-      ),
-  Widget build(BuildContext context) {
-    return const WorkInProgressView(
-      title: 'Inventario',
-      description:
-          'La vista de inventario fue retirada para rehacer el flujo de materiales desde cero sobre la misma estructura de carpetas.',
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => MaterialFormModal(material: material),
+    );
+  }
+
+  void _showMovementForm(BuildContext context, WidgetRef ref, MaterialEntity material, String type) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => MovementFormModal(material: material, type: type),
     );
   }
 }

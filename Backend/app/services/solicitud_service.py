@@ -26,8 +26,11 @@ class SolicitudService:
         return solicitud
 
     @staticmethod
-    def listar(db: Session) -> list[SolicitudMaterial]:
-        return db.query(SolicitudMaterial).order_by(SolicitudMaterial.fecha_creacion.desc()).all()
+    def listar(db: Session, current_user=None) -> list[SolicitudMaterial]:
+        query = db.query(SolicitudMaterial)
+        if current_user and current_user.rol.value == "DOCTOR":
+            query = query.filter(SolicitudMaterial.solicitante_id == current_user.id)
+        return query.order_by(SolicitudMaterial.fecha_creacion.desc()).all()
 
     @staticmethod
     def cambiar_estado(

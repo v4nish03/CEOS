@@ -7,6 +7,7 @@ class RequestEntity {
   final int cantidad;
   final RequestStatus estado;
   final String solicitadoPor;
+  final String? motivo;
 
   RequestEntity({
     required this.id,
@@ -15,5 +16,6 @@ class RequestEntity {
     required this.cantidad,
     required this.estado,
     required this.solicitadoPor,
+    this.motivo,
   });
 }

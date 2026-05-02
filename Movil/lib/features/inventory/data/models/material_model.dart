@@ -11,14 +11,12 @@ class MaterialModel extends MaterialEntity {
   });
 
   factory MaterialModel.fromJson(Map<String, dynamic> json) => MaterialModel(
-    id: json['id'].toString(),
+    id: json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0,
     nombre: json['nombre'],
     categoria: json['categoria'],
     stockMinimo: json['stock_minimo'] ?? 0,
     stockActual: json['stock_actual'] ?? 0,
-    fechaVencimiento: json['fecha_vencimiento'] != null 
-        ? DateTime.parse(json['fecha_vencimiento']) 
-        : null,
+    fechaVencimiento: json['fecha_vencimiento']?.toString(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -26,6 +24,6 @@ class MaterialModel extends MaterialEntity {
     'categoria': categoria,
     'stock_minimo': stockMinimo,
     'stock_actual': stockActual, // Solo para creación [cite: 235]
-    'fecha_vencimiento': fechaVencimiento?.toIso8601String(),
+    'fecha_vencimiento': fechaVencimiento,
   };
 }

@@ -28,6 +28,18 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
+  Future<void> updateMaterial(int id, MaterialEntity material) async {
+    final model = MaterialModel(
+      id: material.id,
+      nombre: material.nombre,
+      categoria: material.categoria,
+      stockMinimo: material.stockMinimo,
+      stockActual: material.stockActual,
+    );
+    await _dio.put('/materiales/$id', data: model.toJson());
+  }
+
+  @override
   Future<void> registrarMovimiento({
     required String materialId,
     required String tipo,

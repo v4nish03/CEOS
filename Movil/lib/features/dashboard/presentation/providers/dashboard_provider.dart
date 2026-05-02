@@ -5,13 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final dashboardSummaryProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
-  final session = ref.watch(authNotifierProvider).session;
+  final session = ref.watch(authProvider);
 
-  if (session == null) {
+  if (session.status != AuthStatus.authenticated) {
     return {'resumen': null, 'alertas': const <dynamic>[], 'mensaje': 'Inicia sesión para ver el panel'};
   }
 
-  if (session.role == UserRole.doctor) {
+  if (session.role == 'DOCTOR') {
     final materiales = await dio.get('/materiales');
     final items = materiales.data as List<dynamic>;
     return {
