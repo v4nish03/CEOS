@@ -1,6 +1,19 @@
-import 'package:ceos/features/inventory/domain/entities/material_entity.dart';
+import '../entities/material_entity.dart';
 
 abstract class InventoryRepository {
-  Future<List<MaterialEntity>> getMaterials();
-  Future<void> registerMovement({required int materialId, required String tipo, required int cantidad});
+  // Materiales
+  Future<List<MaterialEntity>> getMateriales();
+  Future<void> createMaterial(MaterialEntity material);
+  Future<void> updateMaterial(int id, MaterialEntity material);
+  
+  // Movimientos (Punto 3-D)
+  Future<void> registrarMovimiento({
+    required String materialId,
+    required String tipo, // 'entrada', 'salida', 'ajuste'
+    required int cantidad,
+    String? motivo,
+  });
+
+  // Alertas (Punto 3-E)
+  Future<List<Map<String, dynamic>>> getAlertas();
 }

@@ -1,8 +1,15 @@
-import 'package:ceos/core/network/dio_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/network/dio_client.dart';
+import 'package:ceos/features/auth/domain/entities/user_entity.dart';
+import '../../domain/repositories/users_repository.dart';
+import '../../data/repositories/users_repository_impl.dart';
 
-final usersProvider = FutureProvider<List<dynamic>>((ref) async {
+final usersRepositoryProvider = Provider<UsersRepository>((ref) {
   final dio = ref.watch(dioProvider);
-  final response = await dio.get('/usuarios');
-  return response.data as List<dynamic>;
+  return UsersRepositoryImpl(dio);
+});
+
+final usersProvider = FutureProvider<List<UserEntity>>((ref) async {
+  final repo = ref.watch(usersRepositoryProvider);
+  return await repo.getUsers();
 });

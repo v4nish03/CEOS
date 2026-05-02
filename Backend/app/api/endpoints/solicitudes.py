@@ -27,10 +27,10 @@ def crear_solicitud(
 @router.get("", response_model=list[SolicitudOut])
 def listar_solicitudes(
     db: Session = Depends(get_db),
-    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
+    current_user: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO, RoleEnum.DOCTOR)),
 ):
-    """Listado de solicitudes para revisión (INVENTARIO/ADMIN)."""
-    return SolicitudService.listar(db)
+    """Listado de solicitudes para revisión (INVENTARIO/ADMIN) o propias (DOCTOR)."""
+    return SolicitudService.listar(db, current_user=current_user)
 
 
 @router.patch("/{solicitud_id}/estado", response_model=SolicitudOut)

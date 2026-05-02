@@ -91,24 +91,6 @@ flutter pub get
 flutter run -d 76818f5a
 ```
 
-
-### Opción recomendada para USB (sin depender de WiFi): adb reverse
-
-Antes de correr Flutter, enlaza el puerto del teléfono al puerto local de tu PC:
-
-```bash
-adb reverse tcp:8000 tcp:8000
-```
-
-Luego ejecuta la app usando localhost en el teléfono mediante `--dart-define`:
-
-```bash
-cd Movil
-flutter run -d 76818f5a --dart-define=API_BASE_URL=http://127.0.0.1:8000/api/v1
-```
-
-Con esto, el móvil conectado por USB consume tu backend local aunque no uses IP LAN.
-
 ## 7) Errores comunes
 - `Material no encontrado`: usa un `TEST_MATERIAL_ID` que exista.
 - `401`: credenciales/token incorrectos.

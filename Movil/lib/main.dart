@@ -1,27 +1,34 @@
-import 'package:ceos/core/router/app_router.dart';
-import 'package:ceos/core/theme/app_theme.dart';
-import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/router/app_router.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
+  // Asegura que los servicios de Flutter estén inicializados
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ProviderScope(child: CeosApp()));
+  
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class CeosApp extends ConsumerWidget {
-  const CeosApp({super.key});
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(appRouterProvider);
-    ref.watch(authBootstrapProvider);
+    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'CEOS',
+      title: 'Gestión Inventario Clínica',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      
+      // Aplicamos el tema que definimos juntos
+      theme: AppTheme.lightTheme,
+      
+      // Conectamos el router
       routerConfig: router,
     );
   }

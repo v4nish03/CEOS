@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   postgres:
     image: postgres:16-alpine
@@ -9,14 +8,14 @@ services:
       POSTGRES_USER: ceos
       POSTGRES_PASSWORD: ceos
     ports:
-      - "5432:5432"
+      - "0.0.0.0:5432:5432" # Fuerza a escuchar en todas las IPs locales
     volumes:
       - ceos_pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ceos -d ceos"]
-      interval: 5s
+      test: [ "CMD-SHELL", "pg_isready -U ceos -d ceos" ]
+      interval: 10s
       timeout: 5s
-      retries: 20
+      retries: 5
 
 volumes:
   ceos_pg_data:

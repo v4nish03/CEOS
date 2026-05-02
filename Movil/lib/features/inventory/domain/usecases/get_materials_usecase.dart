@@ -1,9 +1,11 @@
-import 'package:ceos/features/inventory/domain/entities/material_entity.dart';
-import 'package:ceos/features/inventory/domain/repositories/inventory_repository.dart';
+import '../entities/material_entity.dart';
+import '../repositories/inventory_repository.dart';
 
 class GetMaterialsUseCase {
-  const GetMaterialsUseCase(this.repository);
-  final InventoryRepository repository;
+  final InventoryRepository _repository;
+  GetMaterialsUseCase(this._repository);
 
-  Future<List<MaterialEntity>> call() => repository.getMaterials();
+  Future<List<MaterialEntity>> execute() async {
+    return await _repository.getMateriales();
+  }
 }

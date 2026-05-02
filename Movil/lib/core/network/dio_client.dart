@@ -1,34 +1,19 @@
-import 'package:ceos/core/constants/app_constants.dart';
-import 'package:ceos/core/storage/secure_storage_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'auth_interceptor.dart';
 
 final dioProvider = Provider<Dio>((ref) {
-  final storage = ref.watch(secureStorageProvider);
-  final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl, connectTimeout: const Duration(seconds: 20)));
-
-  dio.interceptors.add(
-    InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        final token = await storage.getToken();
-        if (token != null && token.isNotEmpty) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        handler.next(options);
-      },
-      onError: (error, handler) async {
-        if (error.response?.statusCode == 401) {
-          await storage.clearSession();
-        }
-        handler.next(error);
-      },
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: 'http://192.168.0.101:8000/api/v1', // Usamos 127.0.0.1 gracias a adb reverse
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      contentType: 'application/json',
     ),
   );
 
+  // Agregamos el interceptor para que todas las peticiones lleven el token
+  dio.interceptors.add(AuthInterceptor());
+
   return dio;
 });
-
-final secureStorageProvider = Provider<SecureStorageService>(
-  (ref) => const SecureStorageService(FlutterSecureStorage()),
-);
