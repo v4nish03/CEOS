@@ -14,3 +14,6 @@ else
 fi
 
 echo "✅ Backend static compile + tests script finalizado"
+python -m pytest -q
+
+echo "✅ Backend static compile + tests OK"

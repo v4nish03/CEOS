@@ -41,3 +41,13 @@ def backup_database(_: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, Role
             return {"detail": f"Error ejecutando pg_dump: {exc.stderr.strip()}"}
 
     return {"detail": "Motor de base de datos no soportado para backup automático."}
+    if "sqlite:///" not in db_url:
+        return {"detail": "Backup automático implementado solo para SQLite en este entorno."}
+
+    db_file = Path(db_url.replace("sqlite:///", ""))
+    backups_dir = db_file.parent / "backups"
+    backups_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    target = backups_dir / f"ceos_backup_{stamp}.db"
+    shutil.copy2(db_file, target)
+    return {"backup_file": str(target)}
