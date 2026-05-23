@@ -35,6 +35,9 @@ MAT_RESP_FILE="$WORKDIR/material_create.json"
 MAT_PAYLOAD=$(python3 - "$MATERIAL_NAME" <<'PY'
 import json, sys
 print(json.dumps({"nombre": sys.argv[1], "categoria": "Insumos", "stock_minimo": 5, "stock_actual": 25}))
+MAT_PAYLOAD=$(python3 - <<'PY'
+import json, os
+print(json.dumps({"nombre": os.environ["MATERIAL_NAME"], "categoria": "Insumos", "stock_minimo": 5, "stock_actual": 25}))
 PY
 )
 HTTP_CODE=$(curl -sS -o "$MAT_RESP_FILE" -w "%{http_code}" -X POST "$BASE_URL/materiales" "${AUTH[@]}" \
