@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fastapi.responses import StreamingResponse
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -51,4 +53,7 @@ def reporte_diario_pdf(
     _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
 ):
     pdf_data = ReportExportService.generar_reporte_diario_pdf(db)
+    output = Path("./reports")
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "reporte_diario_latest.pdf").write_bytes(pdf_data)
     return StreamingResponse(iter([pdf_data]), media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=reporte_diario.pdf"})
