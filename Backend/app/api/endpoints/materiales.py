@@ -17,7 +17,7 @@ legacy_router = APIRouter(tags=["Materials (legacy)"])
 def create_material(
     payload: MaterialCreate,
     db: Session = Depends(get_db),
-    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
+    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.INVENTARIO)),
 ):
     """Alta de material para inventario. Requiere rol INVENTARIO, ADMIN o SUPERADMIN."""
     try:
@@ -41,7 +41,7 @@ def update_material(
     material_id: int,
     payload: MaterialUpdate,
     db: Session = Depends(get_db),
-    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.INVENTARIO)),
+    _: Usuario = Depends(require_roles(RoleEnum.SUPERADMIN, RoleEnum.INVENTARIO)),
 ):
     """Actualización de datos del material."""
     try:

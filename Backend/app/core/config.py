@@ -4,6 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    environment: str = "dev"
+
     project_name: str = "CEOS Inventory API"
     api_v1_prefix: str = "/api/v1"
 
@@ -20,6 +22,10 @@ class Settings(BaseSettings):
     bootstrap_superadmin_email: str = "superadmin@ceos.com"
     bootstrap_superadmin_password: str = "ChangeMe123!"
     bootstrap_superadmin_name: str = "Super Admin"
+
+    daily_report_hour_utc: int = 13
+    daily_report_minute_utc: int = 0
+    reports_output_dir: str = "./reports"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False)
 
