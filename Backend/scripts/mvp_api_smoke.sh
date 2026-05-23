@@ -29,6 +29,7 @@ curl -sf -X POST "$BASE_URL/gastos" "${AUTH[@]}" \
 
 echo "[5/8] Consultar total gastos"
 curl -sf "$BASE_URL/gastos/total" "${AUTH[@]}" > "$WORKDIR/gastos_total.json"
+python - "$WORKDIR/gastos_total.json" <<'PY'
 python - <<'PY' "$WORKDIR/gastos_total.json"
 import json,sys
 v=json.load(open(sys.argv[1]))
@@ -38,6 +39,7 @@ PY
 
 echo "[6/8] Descargar reporte diario PDF"
 curl -sf "$BASE_URL/reportes/diario.pdf" "${AUTH[@]}" -o "$WORKDIR/reporte.pdf"
+python - "$WORKDIR/reporte.pdf" <<'PY'
 python - <<'PY' "$WORKDIR/reporte.pdf"
 import sys
 b=open(sys.argv[1],'rb').read(8)

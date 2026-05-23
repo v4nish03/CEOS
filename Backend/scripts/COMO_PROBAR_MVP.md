@@ -35,3 +35,11 @@ BASE_URL="http://127.0.0.1:8000/api/v1" SA_EMAIL="superadmin@ceos.com" SA_PASSWO
 - Descargar PDF diario
 - Ejecutar backup
 - Consultar resumen de inventario
+
+## Nota si falla `pytest`
+Si ves `/usr/bin/python: No module named pytest`, instala dependencias:
+```bash
+pip install -r requirements.txt
+# o mínimo
+pip install pytest
+```
