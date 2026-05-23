@@ -4,8 +4,9 @@ from app.api.router import api_router
 from app.core.config import get_settings
 from app.database.base import Base
 from app.database.session import SessionLocal, engine
-from app.models import material, movimiento, solicitud, usuario  # noqa: F401
+from app.models import gasto, material, movimiento, solicitud, usuario  # noqa: F401
 from app.services.auth_service import AuthService
+from app.services.scheduler_service import SchedulerService
 
 settings = get_settings()
 
@@ -23,7 +24,18 @@ def startup_event() -> None:
     finally:
         db.close()
 
+    SchedulerService.start(
+        hour=settings.daily_report_hour_utc,
+        minute=settings.daily_report_minute_utc,
+        output_dir=settings.reports_output_dir,
+    )
+
 
 @app.get("/")
 def root():
     return {"message": "CEOS Inventory API running"}
+
+
+@app.on_event("shutdown")
+def shutdown_event() -> None:
+    SchedulerService.shutdown()
