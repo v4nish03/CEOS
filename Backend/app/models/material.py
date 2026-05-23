@@ -13,7 +13,7 @@ class Material(Base):
     nombre: Mapped[str] = mapped_column(String(120), unique=True, index=True, nullable=False)
     categoria: Mapped[str] = mapped_column(String(120), nullable=False)
     stock_actual: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    stock_minimo: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    stock_minimo: Mapped[int] = mapped_column(Integer, nullable=False, default=5)
     fecha_vencimiento: Mapped[date | None] = mapped_column(Date, nullable=True)
     fecha_alerta_vencimiento: Mapped[date | None] = mapped_column(Date, nullable=True)
 
