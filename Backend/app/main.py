@@ -4,7 +4,7 @@ from app.api.router import api_router
 from app.core.config import get_settings
 from app.database.base import Base
 from app.database.session import SessionLocal, engine
-from app.models import material, movimiento, solicitud, usuario  # noqa: F401
+from app.models import gasto, material, movimiento, solicitud, usuario  # noqa: F401
 from app.services.auth_service import AuthService
 
 settings = get_settings()
