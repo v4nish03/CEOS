@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     daily_report_minute_utc: int = 0
     reports_output_dir: str = "./reports"
 
+    # CORS para Flutter Web/desarrollo local. En producción, ajusta a dominios reales.
+    cors_allow_origin_regex: str = r"https?://(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?"
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False)
 
 

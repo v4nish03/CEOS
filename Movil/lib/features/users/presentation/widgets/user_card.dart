@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ceos/features/auth/domain/entities/user_entity.dart';
+import '../../domain/entities/user_summary_entity.dart';
 
 class UserCard extends StatelessWidget {
-  final UserEntity user;
+  final UserSummaryEntity user;
 
   const UserCard({
     super.key,
@@ -12,6 +12,7 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final initial = user.name.trim().isNotEmpty ? user.name.trim().substring(0, 1).toUpperCase() : '?';
     
     // Asignar colores según el rol para identificarlos visualmente
     Color roleColor;
@@ -54,7 +55,7 @@ class UserCard extends StatelessWidget {
               radius: 26,
               backgroundColor: roleColor.withAlpha(30),
               child: Text(
-                user.name.substring(0, 1).toUpperCase(),
+                initial,
                 style: TextStyle(
                   color: roleColor,
                   fontWeight: FontWeight.bold,

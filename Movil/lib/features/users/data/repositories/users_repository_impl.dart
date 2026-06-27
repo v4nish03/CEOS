@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:ceos/features/auth/domain/entities/user_entity.dart';
-import 'package:ceos/features/auth/data/models/user_model.dart';
+import '../models/user_summary_model.dart';
+import '../../domain/entities/user_summary_entity.dart';
 import '../../domain/repositories/users_repository.dart';
 
 class UsersRepositoryImpl implements UsersRepository {
@@ -9,10 +9,10 @@ class UsersRepositoryImpl implements UsersRepository {
   UsersRepositoryImpl(this._dio);
 
   @override
-  Future<List<UserEntity>> getUsers() async {
+  Future<List<UserSummaryEntity>> getUsers() async {
     final response = await _dio.get('/usuarios');
     final List data = response.data;
-    return data.map((json) => UserModel.fromJson(json)).toList();
+    return data.map((json) => UserSummaryModel.fromJson(json as Map<String, dynamic>)).toList();
   }
 
   @override
