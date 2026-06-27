@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ceos/features/reports/presentation/providers/reports_provider.dart';
 import 'package:ceos/features/reports/data/models/report_models.dart';
+import 'package:ceos/features/request/presentation/providers/request_provider.dart';
+import 'package:ceos/features/request/domain/entities/request_entity.dart';
+import 'package:ceos/features/home/presentation/screens/main_wrapper.dart';
 
 class AdminDashboard extends ConsumerWidget {
   final String nombre;
@@ -14,6 +17,7 @@ class AdminDashboard extends ConsumerWidget {
     final resumenAsync = ref.watch(resumenInventarioProvider);
     final alertasAsync = ref.watch(alertasInventarioProvider);
     final topAsync = ref.watch(materialesMasUsadosProvider);
+    final requestsAsync = ref.watch(requestsProvider);
     final theme = Theme.of(context);
 
     return ListView(
@@ -22,6 +26,101 @@ class AdminDashboard extends ConsumerWidget {
         // ── Cabecera ──
         _WelcomeHeader(nombre: nombre, role: role),
         const SizedBox(height: 20),
+
+        // ── Accesos Rápidos ──
+        Text('Accesos Rápidos', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        _AdminQuickActions(role: role),
+        const SizedBox(height: 24),
+
+        // ── Solicitudes Pendientes Banner ──
+        requestsAsync.when(
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+          data: (requests) {
+            final pendingCount = requests.where((r) => r.estado == RequestStatus.pendiente).length;
+            if (pendingCount == 0) return const SizedBox.shrink();
+            
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: Card(
+                color: Colors.orange.shade50,
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.orange.shade300, width: 1.2),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    final labels = getLabelsForRole(role);
+                    final targetIdx = labels.indexWhere((l) => l.toLowerCase() == 'solicitudes');
+                    if (targetIdx != -1) {
+                      ref.read(navigationIndexProvider.notifier).state = targetIdx;
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade100,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.assignment_late_outlined, color: Colors.orange, size: 24),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tienes $pendingCount solicitudes pendientes',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.orange.shade900),
+                              ),
+                              const SizedBox(height: 2),
+                              const Text(
+                                'Haz clic para revisar y procesar',
+                                style: TextStyle(fontSize: 12, color: Colors.black54),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right, color: Colors.orange),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+
+        // ── Nota de permisos ADMIN ──
+        if (role == 'ADMIN')
+          Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.blueAccent.withAlpha(15),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blueAccent.withAlpha(60)),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.blueAccent, size: 18),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Modo Administrador: puedes supervisar inventario y gestionar usuarios, solicitudes y reportes.',
+                    style: TextStyle(fontSize: 12, color: Colors.blueAccent),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
         // ── KPI Cards ──
         Text('Estado del Inventario', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
@@ -54,6 +153,108 @@ class AdminDashboard extends ConsumerWidget {
               : _TopMiniList(materiales: materiales.take(5).toList()),
         ),
       ],
+    );
+  }
+}
+
+class _AdminQuickActions extends ConsumerWidget {
+  final String role;
+  const _AdminQuickActions({required this.role});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasInventory = role == 'SUPERADMIN' || role == 'ADMIN';
+
+    return Row(
+      children: [
+        Expanded(
+          child: _QuickActionCard(
+            label: 'Usuarios',
+            icon: Icons.people_outline,
+            color: Colors.blueAccent,
+            onTap: () => _navigateToTab(ref, 'usuarios'),
+          ),
+        ),
+        const SizedBox(width: 8),
+        if (hasInventory) ...[
+          Expanded(
+            child: _QuickActionCard(
+              label: 'Inventario',
+              icon: Icons.inventory_2_outlined,
+              color: Colors.teal,
+              onTap: () => _navigateToTab(ref, 'inventario'),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+        Expanded(
+          child: _QuickActionCard(
+            label: 'Solicitudes',
+            icon: Icons.assignment_outlined,
+            color: Colors.orange,
+            onTap: () => _navigateToTab(ref, 'solicitudes'),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _QuickActionCard(
+            label: 'Reportes',
+            icon: Icons.bar_chart_outlined,
+            color: Colors.purple,
+            onTap: () => _navigateToTab(ref, 'reportes'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _navigateToTab(WidgetRef ref, String label) {
+    final labels = getLabelsForRole(role);
+    final idx = labels.indexWhere((l) => l.toLowerCase() == label.toLowerCase());
+    if (idx != -1) {
+      ref.read(navigationIndexProvider.notifier).state = idx;
+    }
+  }
+}
+
+class _QuickActionCard extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _QuickActionCard({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 24),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

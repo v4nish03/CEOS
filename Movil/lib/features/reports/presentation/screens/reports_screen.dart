@@ -1,10 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
+import 'package:ceos/core/network/dio_client.dart';
+import 'package:ceos/core/theme/app_theme.dart';
+import 'package:ceos/core/utils/file_saver.dart';
 import '../providers/reports_provider.dart';
 import '../../data/models/report_models.dart';
 
 class ReportsScreen extends ConsumerWidget {
   const ReportsScreen({super.key});
+
+  Future<void> _exportarPdf(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(const SnackBar(content: Text('Generando y descargando PDF...')));
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get(
+        '/reportes/diario.pdf',
+        options: Options(responseType: ResponseType.bytes),
+      );
+      final bytes = response.data;
+      if (bytes != null) {
+        saveFile(bytes, 'reporte_diario.pdf');
+        messenger.showSnackBar(const SnackBar(
+          content: Text('Reporte PDF descargado con éxito'),
+          backgroundColor: AppTheme.success,
+        ));
+      }
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(
+        content: Text('Error al exportar PDF: $e'),
+        backgroundColor: AppTheme.danger,
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -12,6 +41,11 @@ class ReportsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Reportes'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: 'Exportar PDF',
+            onPressed: () => _exportarPdf(context, ref),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Actualizar',

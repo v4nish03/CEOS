@@ -61,6 +61,29 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               children: [
                 _InventoryHeader(materials: materials),
                 const SizedBox(height: 14),
+                // Banner de modo supervisión para ADMIN
+                if (role == 'ADMIN')
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.blueAccent.withAlpha(15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blueAccent.withAlpha(60)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.visibility_outlined, color: Colors.blueAccent, size: 18),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Modo supervisión: puedes consultar el inventario pero los movimientos los gestiona el equipo de Inventario.',
+                            style: TextStyle(fontSize: 12, color: Colors.blueAccent),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 TextField(
                   controller: _searchController,
                   onChanged: (_) => setState(() {}),

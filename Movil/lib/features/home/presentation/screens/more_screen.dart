@@ -2,18 +2,11 @@ import 'package:ceos/core/constants/app_constants.dart';
 import 'package:ceos/core/network/dio_client.dart';
 import 'package:ceos/core/theme/app_theme.dart';
 import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
+import 'package:ceos/features/gastos/presentation/providers/gastos_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final gastosTotalProvider = FutureProvider<double>((ref) async {
-  final role = ref.watch(authProvider).role;
-  if (role == 'DOCTOR') return 0;
-  final dio = ref.watch(dioProvider);
-  final response = await dio.get('/gastos/total');
-  final value = response.data['total_gastado'];
-  return value is num ? value.toDouble() : 0;
-});
+import 'package:go_router/go_router.dart';
 
 class MoreScreen extends ConsumerWidget {
   const MoreScreen({super.key});
@@ -49,9 +42,12 @@ class MoreScreen extends ConsumerWidget {
               _ActionTile(
                 icon: Icons.payments_outlined,
                 title: 'Gastos',
-                subtitle: 'Próxima vista: registrar y revisar compras.',
+                subtitle: 'Registrar y revisar compras del hospital.',
                 color: AppTheme.warning,
-                onTap: () => _showComingSoon(context, 'La vista completa de gastos irá aquí.'),
+                onTap: () async {
+                  await context.push('/gastos');
+                  ref.invalidate(gastosTotalProvider);
+                },
               ),
             _ActionTile(
               icon: Icons.settings_outlined,

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/auth/presentation/screens/auth_bootstrap_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/home/presentation/screens/main_wrapper.dart';
+import '../../features/gastos/presentation/screens/gastos_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -45,6 +45,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/main',
         builder: (context, state) => const MainWrapper(),
+      ),
+      // Módulo de Gastos
+      GoRoute(
+        path: '/gastos',
+        builder: (context, state) => const GastosScreen(),
       ),
     ],
   );

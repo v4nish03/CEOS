@@ -4,7 +4,7 @@ import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final Dio _dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
+  // final Dio _dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
   final Dio _dio = Dio(BaseOptions(baseUrl: 'http://127.0.0.1:8000/api/v1'));
 
   @override
