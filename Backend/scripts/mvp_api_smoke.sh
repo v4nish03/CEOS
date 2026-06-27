@@ -32,20 +32,34 @@ AUTH=(-H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json')
 
 echo "[2/8] Crear material"
 MAT_RESP_FILE="$WORKDIR/material_create.json"
-MAT_PAYLOAD=$(python3 - "$MATERIAL_NAME" <<'PY'
-import json, sys
-print(json.dumps({"nombre": sys.argv[1], "categoria": "Insumos", "stock_minimo": 5, "stock_actual": 25}))
+
+# Exportamos la variable para que Python pueda leerla desde el entorno
+export MATERIAL_NAME
+
+# Generamos el JSON de forma limpia usando Python
 MAT_PAYLOAD=$(python3 - <<'PY'
 import json, os
-print(json.dumps({"nombre": os.environ["MATERIAL_NAME"], "categoria": "Insumos", "stock_minimo": 5, "stock_actual": 25}))
+payload = {
+    "nombre": os.environ["MATERIAL_NAME"],
+    "categoria": "Insumos",
+    "stock_minimo": 5,
+    "stock_actual": 25
+}
+print(json.dumps(payload))
 PY
 )
+
+# Enviamos la petición y capturamos el código HTTP
 HTTP_CODE=$(curl -sS -o "$MAT_RESP_FILE" -w "%{http_code}" -X POST "$BASE_URL/materiales" "${AUTH[@]}" \
   -d "$MAT_PAYLOAD")
-if [ "$HTTP_CODE" -ne 201 ]; then
+
+# Evaluamos si el código es exitoso (200 o 201 dependiendo de tu API)
+if [ "$HTTP_CODE" -ne 201 ] && [ "$HTTP_CODE" -ne 200 ]; then
   echo "Error creando material (HTTP $HTTP_CODE): $(cat "$MAT_RESP_FILE")"
   exit 1
 fi
+
+# Extraemos el ID del material creado
 MAT_ID=$(python3 - "$MAT_RESP_FILE" <<'PY'
 import json, sys
 obj = json.load(open(sys.argv[1]))
