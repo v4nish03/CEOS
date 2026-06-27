@@ -32,6 +32,17 @@ AUTH=(-H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json')
 
 echo "[2/8] Crear material"
 MAT_RESP_FILE="$WORKDIR/material_create.json"
+MAT_PAYLOAD=$(python3 - "$MATERIAL_NAME" <<'PY'
+import json, sys
+print(json.dumps({"nombre": sys.argv[1], "categoria": "Insumos", "stock_minimo": 5, "stock_actual": 25}))
+PY
+)
+HTTP_CODE=$(curl -sS -o "$MAT_RESP_FILE" -w "%{http_code}" -X POST "$BASE_URL/materiales" "${AUTH[@]}" \
+  -d "$MAT_PAYLOAD")
+if [ "$HTTP_CODE" -ne 201 ]; then
+  echo "Error creando material (HTTP $HTTP_CODE): $(cat "$MAT_RESP_FILE")"
+  exit 1
+fi
 
 # Exportamos la variable para que Python pueda leerla desde el entorno
 export MATERIAL_NAME
