@@ -1,7 +1,7 @@
-import 'package:ceos/features/auth/domain/entities/user_entity.dart';
+import '../entities/user_summary_entity.dart';
 
 abstract class UsersRepository {
-  Future<List<UserEntity>> getUsers();
+  Future<List<UserSummaryEntity>> getUsers();
   Future<void> createUser({
     required String nombre,
     required String email,

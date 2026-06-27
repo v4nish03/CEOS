@@ -18,6 +18,14 @@ class _UserFormModalState extends ConsumerState<UserFormModal> {
   String _selectedRole = 'DOCTOR';
   bool _isLoading = false;
 
+  @override
+  void dispose() {
+    _nombreController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _submit() async {
     final nombre = _nombreController.text.trim();
     final email = _emailController.text.trim();
