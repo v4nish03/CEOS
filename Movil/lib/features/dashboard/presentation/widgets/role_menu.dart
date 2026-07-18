@@ -1,3 +1,4 @@
+import 'package:ceos/core/permissions/role_permissions.dart';
 import 'package:ceos/features/auth/domain/entities/auth_session.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,17 +10,21 @@ class RoleMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tiles = <Widget>[];
+    final permissions = permissionsForRole(role.name.toUpperCase());
 
-    if (role == UserRole.superadmin || role == UserRole.admin || role == UserRole.inventario) {
+    if (permissions.canViewInventory) {
       tiles.add(_tile(context, 'Inventario', Icons.inventory_2_outlined, '/inventory'));
+    }
+
+    if (permissions.canViewReports) {
       tiles.add(_tile(context, 'Reportes', Icons.analytics_outlined, '/reports'));
     }
 
-    if (role == UserRole.superadmin || role == UserRole.admin) {
+    if (permissions.canViewUsers) {
       tiles.add(_tile(context, 'Usuarios', Icons.groups_outlined, '/users'));
     }
 
-    if (role == UserRole.doctor) {
+    if (permissions.canCreateRequests) {
       tiles.add(_tile(context, 'Disponibilidad', Icons.medical_information_outlined, '/inventory'));
     }
 
