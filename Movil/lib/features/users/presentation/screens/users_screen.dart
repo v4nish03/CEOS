@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ceos/core/permissions/role_permissions.dart';
 import '../providers/users_provider.dart';
 import '../widgets/user_card.dart';
 import '../widgets/user_form_modal.dart';
@@ -16,7 +17,8 @@ class UsersScreen extends ConsumerWidget {
     // Solo ADMIN y SUPERADMIN deberían poder ver esta vista, 
     // pero igual la protegemos visualmente por si acaso.
     final role = session.role ?? 'DOCTOR';
-    final canManage = role == 'SUPERADMIN' || role == 'ADMIN';
+    final permissions = permissionsForRole(role);
+    final canManage = permissions.canManageUsers;
 
     if (!canManage) {
       return const Scaffold(

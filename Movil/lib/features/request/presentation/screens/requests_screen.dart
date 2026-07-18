@@ -1,3 +1,4 @@
+import 'package:ceos/core/permissions/role_permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/request_provider.dart';
@@ -13,8 +14,9 @@ class RequestsScreen extends ConsumerWidget {
     final requestsAsync = ref.watch(requestsProvider);
     final role = ref.watch(authProvider).role;
     
-    final isDoctor = role == 'DOCTOR';
-    final canReview = role == 'SUPERADMIN' || role == 'ADMIN' || role == 'INVENTARIO';
+    final permissions = permissionsForRole(role);
+    final isDoctor = permissions.canCreateRequests;
+    final canReview = permissions.canReviewRequests;
 
     return Scaffold(
       appBar: AppBar(

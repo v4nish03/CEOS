@@ -1,4 +1,5 @@
 import 'package:ceos/core/constants/app_constants.dart';
+import 'package:ceos/core/permissions/role_permissions.dart';
 import 'package:ceos/core/network/dio_client.dart';
 import 'package:ceos/core/theme/app_theme.dart';
 import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
@@ -15,8 +16,9 @@ class MoreScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(authProvider);
     final role = session.role ?? 'DOCTOR';
-    final canSeeGastos = role == 'SUPERADMIN' || role == 'ADMIN' || role == 'INVENTARIO';
-    final canBackup = role == 'SUPERADMIN' || role == 'ADMIN';
+    final permissions = permissionsForRole(role);
+    final canSeeGastos = permissions.canViewExpenses;
+    final canBackup = permissions.canCreateBackups;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Más')),
