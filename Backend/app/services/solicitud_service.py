@@ -14,6 +14,9 @@ class SolicitudService:
         if not material:
             raise ValueError("Material no encontrado")
 
+        if payload.cantidad > material.stock_actual:
+            raise ValueError("La cantidad solicitada supera el stock disponible")
+
         solicitud = SolicitudMaterial(
             material_id=payload.material_id,
             cantidad=payload.cantidad,

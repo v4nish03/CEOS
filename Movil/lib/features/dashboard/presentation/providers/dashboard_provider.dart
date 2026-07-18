@@ -1,5 +1,4 @@
 import 'package:ceos/core/network/dio_client.dart';
-import 'package:ceos/features/auth/domain/entities/auth_session.dart';
 import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

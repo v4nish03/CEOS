@@ -270,6 +270,7 @@ class InventoryDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final resumenAsync = ref.watch(resumenInventarioProvider);
     final alertasAsync = ref.watch(alertasInventarioProvider);
+    final requestsAsync = ref.watch(requestsProvider);
     final theme = Theme.of(context);
 
     return ListView(
@@ -278,7 +279,98 @@ class InventoryDashboard extends ConsumerWidget {
         _WelcomeHeader(nombre: nombre, role: 'INVENTARIO'),
         const SizedBox(height: 20),
 
-        Text('Stock Actual', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+        // ── Accesos Rápidos ──
+        Text('Accesos Rápidos', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(child: _QuickActionCard(
+              label: 'Inventario',
+              icon: Icons.inventory_2_outlined,
+              color: Colors.teal,
+              onTap: () => _nav(ref, 'inventario'),
+            )),
+            const SizedBox(width: 8),
+            Expanded(child: _QuickActionCard(
+              label: 'Movimientos',
+              icon: Icons.swap_vert,
+              color: Colors.blueAccent,
+              onTap: () => _nav(ref, 'movimientos'),
+            )),
+            const SizedBox(width: 8),
+            Expanded(child: _QuickActionCard(
+              label: 'Solicitudes',
+              icon: Icons.assignment_outlined,
+              color: Colors.orange,
+              onTap: () => _nav(ref, 'solicitudes'),
+            )),
+            const SizedBox(width: 8),
+            Expanded(child: _QuickActionCard(
+              label: 'Reportes',
+              icon: Icons.bar_chart_outlined,
+              color: Colors.purple,
+              onTap: () => _nav(ref, 'reportes'),
+            )),
+          ],
+        ),
+        const SizedBox(height: 24),
+
+        // ── Solicitudes Pendientes Banner ──
+        requestsAsync.when(
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+          data: (requests) {
+            final pendingCount = requests.where((r) => r.estado == RequestStatus.pendiente).length;
+            if (pendingCount == 0) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: Card(
+                color: Colors.orange.shade50,
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.orange.shade300, width: 1.2),
+                ),
+                child: InkWell(
+                  onTap: () => _nav(ref, 'solicitudes'),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade100,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.assignment_late_outlined, color: Colors.orange, size: 24),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$pendingCount solicitudes pendientes',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.orange.shade900),
+                              ),
+                              const Text('Toca para revisar y procesar', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right, color: Colors.orange),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+
+        // ── KPIs Stock ──
+        Text('Estado del Inventario', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         resumenAsync.when(
           loading: () => const _KpiSkeleton(),
@@ -287,6 +379,7 @@ class InventoryDashboard extends ConsumerWidget {
         ),
         const SizedBox(height: 24),
 
+        // ── Alertas ──
         Text('Alertas de Stock Bajo / Vencimiento', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 10),
         alertasAsync.when(
@@ -294,25 +387,14 @@ class InventoryDashboard extends ConsumerWidget {
           error: (e, _) => _InlineError(message: 'Error cargando alertas', onRetry: () => ref.invalidate(alertasInventarioProvider)),
           data: (alertas) => _AlertasSection(alertas: alertas),
         ),
-
-        const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.teal.withAlpha(15),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.teal.withAlpha(60)),
-          ),
-          child: const Row(
-            children: [
-              Icon(Icons.info_outline, color: Colors.teal),
-              SizedBox(width: 10),
-              Expanded(child: Text('Usa la pestaña "Inventario" para registrar entradas y salidas.', style: TextStyle(color: Colors.teal))),
-            ],
-          ),
-        ),
       ],
     );
+  }
+
+  void _nav(WidgetRef ref, String label) {
+    final labels = getLabelsForRole('INVENTARIO');
+    final idx = labels.indexWhere((l) => l == label);
+    if (idx != -1) ref.read(navigationIndexProvider.notifier).state = idx;
   }
 }
 
@@ -326,6 +408,7 @@ class DoctorDashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final kpisAsync = ref.watch(doctorKpisProvider);
+    final requestsAsync = ref.watch(requestsProvider);
     final theme = Theme.of(context);
 
     return ListView(
@@ -334,7 +417,7 @@ class DoctorDashboard extends ConsumerWidget {
         _WelcomeHeader(nombre: nombre, role: 'DOCTOR'),
         const SizedBox(height: 20),
 
-        // Card principal de bienvenida
+        // Card de bienvenida
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(24),
@@ -361,6 +444,7 @@ class DoctorDashboard extends ConsumerWidget {
         ),
         const SizedBox(height: 24),
 
+        // KPIs de disponibilidad
         Text('Disponibilidad de Materiales', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         kpisAsync.when(
@@ -384,7 +468,7 @@ class DoctorDashboard extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(child: _SimpleKpiCard(
                 value: kpis['sin_stock_suficiente'].toString(),
-                label: 'Con Stock\nBajo',
+                label: 'Stock\nBajo',
                 icon: Icons.warning_amber_rounded,
                 color: (kpis['sin_stock_suficiente'] ?? 0) > 0 ? Colors.redAccent : Colors.green,
               )),
@@ -393,14 +477,101 @@ class DoctorDashboard extends ConsumerWidget {
         ),
         const SizedBox(height: 24),
 
+        // Mis solicitudes recientes
+        Text('Mis Solicitudes Recientes', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 10),
+        requestsAsync.when(
+          loading: () => const _KpiSkeleton(),
+          error: (_, __) => const SizedBox.shrink(),
+          data: (requests) {
+            if (requests.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withAlpha(15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.withAlpha(40)),
+                ),
+                child: const Text('No tienes solicitudes enviadas aún.', style: TextStyle(color: Colors.grey)),
+              );
+            }
+            final recent = requests.take(3).toList();
+            return Column(
+              children: recent.map((r) {
+                final color = r.estado.name == 'aprobada'
+                    ? Colors.green
+                    : r.estado.name == 'rechazada'
+                        ? Colors.red
+                        : Colors.orange;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(12),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: color.withAlpha(60)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.assignment_outlined, color: color, size: 18),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Material #${r.materialId} — ${r.cantidad} ud.',
+                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: color.withAlpha(25),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: color.withAlpha(80)),
+                        ),
+                        child: Text(
+                          r.estado.name.toUpperCase(),
+                          style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            );
+          },
+        ),
+        const SizedBox(height: 24),
+
         // Acciones rápidas
         Text('Acciones Rápidas', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 10),
         Row(
           children: [
-            Expanded(child: _QuickAction(icon: Icons.add_circle_outline, label: 'Nueva\nSolicitud', color: Colors.green)),
+            Expanded(
+              child: _QuickActionCard(
+                label: 'Nueva\nSolicitud',
+                icon: Icons.add_circle_outline,
+                color: Colors.green,
+                onTap: () {
+                  final labels = getLabelsForRole('DOCTOR');
+                  final idx = labels.indexWhere((l) => l == 'solicitudes');
+                  if (idx != -1) ref.read(navigationIndexProvider.notifier).state = idx;
+                },
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _QuickAction(icon: Icons.history, label: 'Mis\nSolicitudes', color: Colors.orange)),
+            Expanded(
+              child: _QuickActionCard(
+                label: 'Ver\nMateriales',
+                icon: Icons.inventory_2_outlined,
+                color: Colors.blueAccent,
+                onTap: () {
+                  final labels = getLabelsForRole('DOCTOR');
+                  final idx = labels.indexWhere((l) => l == 'materiales');
+                  if (idx != -1) ref.read(navigationIndexProvider.notifier).state = idx;
+                },
+              ),
+            ),
           ],
         ),
       ],
@@ -610,32 +781,6 @@ class _TopMiniList extends StatelessWidget {
           ),
         );
       }).toList(),
-    );
-  }
-}
-
-class _QuickAction extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  const _QuickAction({required this.icon, required this.label, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 18),
-      decoration: BoxDecoration(
-        color: color.withAlpha(20),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withAlpha(80)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text(label, textAlign: TextAlign.center, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13)),
-        ],
-      ),
     );
   }
 }

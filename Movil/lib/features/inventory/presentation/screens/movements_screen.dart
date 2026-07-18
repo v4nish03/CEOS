@@ -20,7 +20,6 @@ class MovementsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final movimientosAsync = ref.watch(movimientosProvider);
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(

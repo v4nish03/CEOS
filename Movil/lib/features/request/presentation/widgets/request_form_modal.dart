@@ -30,6 +30,13 @@ class _RequestFormModalState extends ConsumerState<RequestFormModal> {
       return;
     }
 
+    if (cantidad > _selectedMaterial!.stockActual) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Cantidad solicitada ($cantidad) supera el stock disponible (${_selectedMaterial!.stockActual})'))
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     
     try {
@@ -91,7 +98,7 @@ class _RequestFormModalState extends ConsumerState<RequestFormModal> {
                 value: _selectedMaterial,
                 items: materials.map((m) => DropdownMenuItem(
                   value: m,
-                  child: Text(m.nombre),
+                  child: Text('${m.nombre} (Stock: ${m.stockActual})'),
                 )).toList(),
                 onChanged: (val) => setState(() => _selectedMaterial = val),
               );

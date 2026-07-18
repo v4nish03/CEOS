@@ -2,6 +2,7 @@ import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
 import 'package:ceos/features/auth/presentation/widgets/dashboard_view.dart';
 import 'package:ceos/features/home/presentation/screens/more_screen.dart';
 import 'package:ceos/features/inventory/presentation/screens/inventory_screen.dart';
+import 'package:ceos/features/inventory/presentation/screens/movements_screen.dart';
 import 'package:ceos/features/reports/presentation/screens/reports_screen.dart';
 import 'package:ceos/features/request/presentation/screens/requests_screen.dart';
 import 'package:ceos/features/users/presentation/screens/users_screen.dart';
@@ -57,6 +58,7 @@ class MainWrapper extends ConsumerWidget {
         return [
           ...base,
           const _RoleDestination(label: 'Inventario', icon: Icons.inventory_2_outlined, selectedIcon: Icons.inventory_2, screen: InventoryScreen()),
+          const _RoleDestination(label: 'Movimientos', icon: Icons.swap_vert_outlined, selectedIcon: Icons.swap_vert, screen: MovementsScreen()),
           const _RoleDestination(label: 'Solicitudes', icon: Icons.assignment_outlined, selectedIcon: Icons.assignment, screen: RequestsScreen()),
           const _RoleDestination(label: 'Reportes', icon: Icons.bar_chart_outlined, selectedIcon: Icons.bar_chart, screen: ReportsScreen()),
           const _RoleDestination(label: 'Más', icon: Icons.more_horiz, selectedIcon: Icons.more, screen: MoreScreen()),
@@ -99,7 +101,7 @@ List<String> getLabelsForRole(String role) {
     case 'DOCTOR':
       return [...base, 'materiales', 'solicitudes', 'más'];
     case 'INVENTARIO':
-      return [...base, 'inventario', 'solicitudes', 'reportes', 'más'];
+      return [...base, 'inventario', 'movimientos', 'solicitudes', 'reportes', 'más'];
     case 'SUPERADMIN':
       return [...base, 'usuarios', 'inventario', 'solicitudes', 'reportes', 'más'];
     case 'ADMIN':
