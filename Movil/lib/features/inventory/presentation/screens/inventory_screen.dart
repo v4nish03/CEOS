@@ -1,3 +1,4 @@
+import 'package:ceos/core/permissions/role_permissions.dart';
 import 'package:ceos/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   Widget build(BuildContext context) {
     final materialsAsync = ref.watch(materialsProvider);
     final role = ref.watch(authProvider).role ?? 'DOCTOR';
-    final canEdit = role == 'SUPERADMIN' || role == 'INVENTARIO';
+    final permissions = permissionsForRole(role);
+    final canEdit = permissions.canModifyInventory;
 
     return Scaffold(
       appBar: AppBar(
@@ -62,7 +64,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 _InventoryHeader(materials: materials),
                 const SizedBox(height: 14),
                 // Banner de modo supervisión para ADMIN
-                if (role == 'ADMIN')
+                if (permissions.isInventoryReadOnly)
                   Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),

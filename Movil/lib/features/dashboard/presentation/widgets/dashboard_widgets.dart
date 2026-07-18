@@ -1,3 +1,4 @@
+import 'package:ceos/core/permissions/role_permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ceos/features/reports/presentation/providers/reports_provider.dart';
@@ -19,6 +20,7 @@ class AdminDashboard extends ConsumerWidget {
     final topAsync = ref.watch(materialesMasUsadosProvider);
     final requestsAsync = ref.watch(requestsProvider);
     final theme = Theme.of(context);
+    final permissions = permissionsForRole(role);
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -30,7 +32,7 @@ class AdminDashboard extends ConsumerWidget {
         // ── Accesos Rápidos ──
         Text('Accesos Rápidos', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
-        _AdminQuickActions(role: role),
+        _AdminQuickActions(role: role, permissions: permissions),
         const SizedBox(height: 24),
 
         // ── Solicitudes Pendientes Banner ──
@@ -159,51 +161,49 @@ class AdminDashboard extends ConsumerWidget {
 
 class _AdminQuickActions extends ConsumerWidget {
   final String role;
-  const _AdminQuickActions({required this.role});
+  final RolePermissions permissions;
+
+  const _AdminQuickActions({required this.role, required this.permissions});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hasInventory = role == 'SUPERADMIN' || role == 'ADMIN';
+    final actions = <_QuickActionCard>[
+      if (permissions.canViewUsers)
+        _QuickActionCard(
+          label: 'Usuarios',
+          icon: Icons.people_outline,
+          color: Colors.blueAccent,
+          onTap: () => _navigateToTab(ref, 'usuarios'),
+        ),
+      if (permissions.canViewInventory)
+        _QuickActionCard(
+          label: permissions.canModifyInventory ? 'Inventario' : 'Supervisión',
+          icon: permissions.canModifyInventory ? Icons.inventory_2_outlined : Icons.visibility_outlined,
+          color: Colors.teal,
+          onTap: () => _navigateToTab(ref, 'inventario'),
+        ),
+      if (permissions.canReviewRequests)
+        _QuickActionCard(
+          label: 'Solicitudes',
+          icon: Icons.assignment_outlined,
+          color: Colors.orange,
+          onTap: () => _navigateToTab(ref, 'solicitudes'),
+        ),
+      if (permissions.canViewReports)
+        _QuickActionCard(
+          label: 'Reportes',
+          icon: Icons.bar_chart_outlined,
+          color: Colors.purple,
+          onTap: () => _navigateToTab(ref, 'reportes'),
+        ),
+    ];
 
     return Row(
       children: [
-        Expanded(
-          child: _QuickActionCard(
-            label: 'Usuarios',
-            icon: Icons.people_outline,
-            color: Colors.blueAccent,
-            onTap: () => _navigateToTab(ref, 'usuarios'),
-          ),
-        ),
-        const SizedBox(width: 8),
-        if (hasInventory) ...[
-          Expanded(
-            child: _QuickActionCard(
-              label: 'Inventario',
-              icon: Icons.inventory_2_outlined,
-              color: Colors.teal,
-              onTap: () => _navigateToTab(ref, 'inventario'),
-            ),
-          ),
-          const SizedBox(width: 8),
+        for (var index = 0; index < actions.length; index++) ...[
+          Expanded(child: actions[index]),
+          if (index < actions.length - 1) const SizedBox(width: 8),
         ],
-        Expanded(
-          child: _QuickActionCard(
-            label: 'Solicitudes',
-            icon: Icons.assignment_outlined,
-            color: Colors.orange,
-            onTap: () => _navigateToTab(ref, 'solicitudes'),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _QuickActionCard(
-            label: 'Reportes',
-            icon: Icons.bar_chart_outlined,
-            color: Colors.purple,
-            onTap: () => _navigateToTab(ref, 'reportes'),
-          ),
-        ),
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:ceos/core/permissions/role_permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -13,8 +14,8 @@ class GastosScreen extends ConsumerWidget {
     final gastosAsync = ref.watch(gastosProvider);
     final totalAsync = ref.watch(gastosTotalProvider);
     final role = ref.watch(authProvider).role ?? 'DOCTOR';
-    // El backend solo permite crear gastos a SUPERADMIN e INVENTARIO
-    final canCreateGasto = role == 'SUPERADMIN' || role == 'INVENTARIO';
+    final permissions = permissionsForRole(role);
+    final canCreateGasto = permissions.canCreateExpenses;
     final theme = Theme.of(context);
     final currencyFormat = NumberFormat.currency(locale: 'es_US', symbol: '\$', decimalDigits: 2);
 
