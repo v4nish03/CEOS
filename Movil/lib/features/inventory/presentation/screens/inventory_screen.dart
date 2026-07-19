@@ -1,5 +1,6 @@
 import 'package:ceos/core/permissions/role_permissions.dart';
 import 'package:ceos/core/theme/app_theme.dart';
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/inventory_provider.dart';
@@ -34,6 +35,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final canEdit = permissions.canModifyInventory;
 
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(
         title: Text(role == 'DOCTOR' ? 'Materiales' : 'Inventario'),
         actions: [
@@ -51,7 +53,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               label: const Text('Nuevo material'),
             )
           : null,
-      body: materialsAsync.when(
+      body: PremiumBackground(
+        child: materialsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => _InventoryError(onRetry: () => ref.invalidate(materialsProvider), error: error),
         data: (materials) {
@@ -124,6 +127,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             ),
           );
         },
+      ),
       ),
     );
   }
@@ -199,7 +203,8 @@ class _MiniStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return GlassContainer(
+      padding: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -207,7 +212,7 @@ class _MiniStat extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(height: 8),
-            Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+            Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: PremiumGlass.slate800)),
             Text(label, style: const TextStyle(fontSize: 11, color: AppTheme.slate, fontWeight: FontWeight.w700)),
           ],
         ),
@@ -255,7 +260,8 @@ class _EmptyInventory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return GlassContainer(
+      padding: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(28),
         child: Column(

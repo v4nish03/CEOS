@@ -28,16 +28,39 @@ class MainWrapper extends ConsumerWidget {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF1F5F9),
+      extendBody: true,
       body: IndexedStack(
         index: safeIndex,
         children: destinations.map((item) => item.screen).toList(),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: safeIndex,
-        onDestinationSelected: (index) => ref.read(navigationIndexProvider.notifier).state = index,
-        destinations: destinations
-            .map((item) => NavigationDestination(icon: Icon(item.icon), selectedIcon: Icon(item.selectedIcon), label: item.label))
-            .toList(),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(170),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: Colors.white.withAlpha(220)),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 24, offset: const Offset(0, 12)),
+                ],
+              ),
+              child: NavigationBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                selectedIndex: safeIndex,
+                onDestinationSelected: (index) => ref.read(navigationIndexProvider.notifier).state = index,
+                destinations: destinations
+                    .map((item) => NavigationDestination(icon: Icon(item.icon), selectedIcon: Icon(item.selectedIcon), label: item.label))
+                    .toList(),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

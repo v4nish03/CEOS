@@ -23,7 +23,7 @@ class AdminDashboard extends ConsumerWidget {
     final permissions = permissionsForRole(role);
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
       children: [
         // ── Cabecera ──
         _WelcomeHeader(nombre: nombre, role: role),
@@ -45,13 +45,9 @@ class AdminDashboard extends ConsumerWidget {
             
             return Padding(
               padding: const EdgeInsets.only(bottom: 24),
-              child: Card(
-                color: Colors.orange.shade50,
-                elevation: 1,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Colors.orange.shade300, width: 1.2),
-                ),
+              child: GlassContainer(
+                padding: EdgeInsets.zero,
+                color: const Color(0xFFFFFBEB).withAlpha(190),
                 child: InkWell(
                   onTap: () {
                     final labels = getLabelsForRole(role);
@@ -232,13 +228,11 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return GlassContainer(
+      padding: EdgeInsets.zero,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
           child: Column(
@@ -249,7 +243,7 @@ class _QuickActionCard extends StatelessWidget {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: PremiumGlass.slate800, letterSpacing: 0.2),
               ),
             ],
           ),
@@ -274,7 +268,7 @@ class InventoryDashboard extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
       children: [
         _WelcomeHeader(nombre: nombre, role: 'INVENTARIO'),
         const SizedBox(height: 20),
@@ -324,13 +318,9 @@ class InventoryDashboard extends ConsumerWidget {
             if (pendingCount == 0) return const SizedBox.shrink();
             return Padding(
               padding: const EdgeInsets.only(bottom: 24),
-              child: Card(
-                color: Colors.orange.shade50,
-                elevation: 1,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Colors.orange.shade300, width: 1.2),
-                ),
+              child: GlassContainer(
+                padding: EdgeInsets.zero,
+                color: const Color(0xFFFFFBEB).withAlpha(190),
                 child: InkWell(
                   onTap: () => _nav(ref, 'solicitudes'),
                   borderRadius: BorderRadius.circular(16),
@@ -412,7 +402,7 @@ class DoctorDashboard extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
       children: [
         _WelcomeHeader(nombre: nombre, role: 'DOCTOR'),
         const SizedBox(height: 20),
@@ -657,21 +647,15 @@ class _SimpleKpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassContainer(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 8, offset: const Offset(0, 3))],
-        border: Border.all(color: color.withAlpha(50)),
-      ),
       child: Column(
         children: [
           Icon(icon, color: color, size: 22),
           const SizedBox(height: 6),
           Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color)),
           const SizedBox(height: 2),
-          Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+          Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: PremiumGlass.slate500, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -685,13 +669,9 @@ class _AlertasSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (alertas.isEmpty) {
-      return Container(
+      return GlassContainer(
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.green.withAlpha(15),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green.withAlpha(60)),
-        ),
+        color: const Color(0xFF22C55E).withAlpha(18),
         child: const Row(
           children: [
             Icon(Icons.check_circle_outline, color: Colors.green),
@@ -705,17 +685,13 @@ class _AlertasSection extends StatelessWidget {
     return Column(
       children: alertas.take(6).map((a) {
         final isStockBajo = a.isStockBajo;
-        final color = isStockBajo ? Colors.redAccent : Colors.orange;
+        final color = isStockBajo ? const Color(0xFFEF4444) : const Color(0xFFF59E0B);
         final icon = isStockBajo ? Icons.warning_amber_rounded : Icons.schedule;
 
-        return Container(
+        return GlassContainer(
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withAlpha(12),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withAlpha(70)),
-          ),
+          color: color.withAlpha(18),
           child: Row(
             children: [
               Icon(icon, color: color, size: 20),
@@ -749,14 +725,9 @@ class _TopMiniList extends StatelessWidget {
         final i = e.key;
         final m = e.value;
         final progress = maxVal > 0 ? m.totalSalida / maxVal : 0.0;
-        return Container(
+        return GlassContainer(
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [BoxShadow(color: Colors.black.withAlpha(8), blurRadius: 6)],
-          ),
           child: Column(
             children: [
               Row(

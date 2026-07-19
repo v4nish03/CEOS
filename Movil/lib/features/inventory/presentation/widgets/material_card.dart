@@ -1,3 +1,4 @@
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/material_entity.dart';
 
@@ -21,17 +22,8 @@ class MaterialCard extends StatelessWidget {
     final isLowStock = material.stockActual <= material.stockMinimo;
 
     return Container(
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: isLowStock ? Border.all(color: Colors.redAccent.withAlpha(150), width: 1.5) : null,
+      decoration: PremiumGlass.glassDecoration(
+        borderColor: isLowStock ? const Color(0xFFFECACA).withAlpha(220) : Colors.white.withAlpha(220),
       ),
       child: Material(
         color: Colors.transparent,
@@ -65,7 +57,7 @@ class MaterialCard extends StatelessWidget {
                     children: [
                       Text(
                         material.nombre,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: PremiumGlass.slate800, letterSpacing: 0.2),
                       ),
                       const SizedBox(height: 4),
                       Text(

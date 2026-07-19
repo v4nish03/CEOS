@@ -19,6 +19,7 @@ class RequestsScreen extends ConsumerWidget {
     final canReview = permissions.canReviewRequests;
 
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(
         title: Text(isDoctor ? 'Mis Solicitudes' : 'Revisión de Solicitudes'),
         actions: [
@@ -35,7 +36,8 @@ class RequestsScreen extends ConsumerWidget {
               label: const Text('Nueva Solicitud'),
             )
           : null,
-      body: requestsAsync.when(
+      body: PremiumBackground(
+        child: requestsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -97,6 +99,7 @@ class RequestsScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
       ),
     );
   }

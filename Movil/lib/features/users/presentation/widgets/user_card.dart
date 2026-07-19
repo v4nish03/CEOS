@@ -1,3 +1,4 @@
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/user_summary_entity.dart';
 
@@ -34,18 +35,7 @@ class UserCard extends StatelessWidget {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: roleColor.withAlpha(50), width: 1.5),
-      ),
+      decoration: PremiumGlass.glassDecoration(borderColor: roleColor.withAlpha(70)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -72,7 +62,7 @@ class UserCard extends StatelessWidget {
                 children: [
                   Text(
                     user.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: PremiumGlass.slate800, letterSpacing: 0.2),
                   ),
                   const SizedBox(height: 4),
                   Text(

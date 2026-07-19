@@ -1,3 +1,4 @@
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ceos/core/permissions/role_permissions.dart';
@@ -22,11 +23,13 @@ class UsersScreen extends ConsumerWidget {
 
     if (!canManage) {
       return const Scaffold(
-        body: Center(child: Text('Acceso Denegado. Solo administradores.')),
+        backgroundColor: PremiumGlass.canvas,
+        body: PremiumBackground(child: Center(child: Text('Acceso Denegado. Solo administradores.'))),
       );
     }
 
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(
         title: const Text('Gestión de Usuarios'),
         actions: [
@@ -41,7 +44,8 @@ class UsersScreen extends ConsumerWidget {
         icon: const Icon(Icons.person_add),
         label: const Text('Nuevo Usuario'),
       ),
-      body: usersAsync.when(
+      body: PremiumBackground(
+        child: usersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -83,6 +87,7 @@ class UsersScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
       ),
     );
   }

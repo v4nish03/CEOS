@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class AppTheme {
   // CEOS tiene un logo sobrio (letras negras sobre blanco). La app toma esa
   // base editorial y agrega acentos clínicos suaves para estados y acciones.
-  static const Color ink = Color(0xFF111111);
+  static const Color ink = Color(0xFF1E293B);
   static const Color graphite = Color(0xFF2F3437);
-  static const Color slate = Color(0xFF667085);
-  static const Color porcelain = Color(0xFFF7F8FA);
+  static const Color slate = Color(0xFF64748B);
+  static const Color porcelain = Color(0xFFF1F5F9);
   static const Color card = Color(0xFFFFFFFF);
   static const Color border = Color(0xFFE4E7EC);
   static const Color clinicalTeal = Color(0xFF0F766E);
@@ -87,6 +87,13 @@ class AppTheme {
           textStyle: const TextStyle(fontWeight: FontWeight.w800),
         ),
       ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: ink,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        extendedTextStyle: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: ink,
@@ -107,7 +114,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         height: 72,
         elevation: 0,
-        backgroundColor: card,
+        backgroundColor: Colors.white70,
         indicatorColor: softTeal,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
