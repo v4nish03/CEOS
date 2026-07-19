@@ -1,5 +1,7 @@
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ceos/core/permissions/role_permissions.dart';
 import '../providers/users_provider.dart';
 import '../widgets/user_card.dart';
 import '../widgets/user_form_modal.dart';
@@ -16,15 +18,18 @@ class UsersScreen extends ConsumerWidget {
     // Solo ADMIN y SUPERADMIN deberían poder ver esta vista, 
     // pero igual la protegemos visualmente por si acaso.
     final role = session.role ?? 'DOCTOR';
-    final canManage = role == 'SUPERADMIN' || role == 'ADMIN';
+    final permissions = permissionsForRole(role);
+    final canManage = permissions.canManageUsers;
 
     if (!canManage) {
       return const Scaffold(
-        body: Center(child: Text('Acceso Denegado. Solo administradores.')),
+        backgroundColor: PremiumGlass.canvas,
+        body: PremiumBackground(child: Center(child: Text('Acceso Denegado. Solo administradores.'))),
       );
     }
 
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(
         title: const Text('Gestión de Usuarios'),
         actions: [
@@ -39,7 +44,8 @@ class UsersScreen extends ConsumerWidget {
         icon: const Icon(Icons.person_add),
         label: const Text('Nuevo Usuario'),
       ),
-      body: usersAsync.when(
+      body: PremiumBackground(
+        child: usersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -81,6 +87,7 @@ class UsersScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
       ),
     );
   }

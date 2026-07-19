@@ -1,3 +1,5 @@
+import 'package:ceos/core/permissions/role_permissions.dart';
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/request_provider.dart';
@@ -13,10 +15,12 @@ class RequestsScreen extends ConsumerWidget {
     final requestsAsync = ref.watch(requestsProvider);
     final role = ref.watch(authProvider).role;
     
-    final isDoctor = role == 'DOCTOR';
-    final canReview = role == 'SUPERADMIN' || role == 'ADMIN' || role == 'INVENTARIO';
+    final permissions = permissionsForRole(role);
+    final isDoctor = permissions.canCreateRequests;
+    final canReview = permissions.canReviewRequests;
 
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(
         title: Text(isDoctor ? 'Mis Solicitudes' : 'Revisión de Solicitudes'),
         actions: [
@@ -33,7 +37,8 @@ class RequestsScreen extends ConsumerWidget {
               label: const Text('Nueva Solicitud'),
             )
           : null,
-      body: requestsAsync.when(
+      body: PremiumBackground(
+        child: requestsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -95,6 +100,7 @@ class RequestsScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
       ),
     );
   }

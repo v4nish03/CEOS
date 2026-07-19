@@ -1,3 +1,4 @@
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -38,6 +39,7 @@ class ReportsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(
         title: const Text('Reportes'),
         actions: [
@@ -57,7 +59,8 @@ class ReportsScreen extends ConsumerWidget {
           )
         ],
       ),
-      body: DefaultTabController(
+      body: PremiumBackground(
+        child: DefaultTabController(
         length: 3,
         child: Column(
           children: [
@@ -83,6 +86,7 @@ class ReportsScreen extends ConsumerWidget {
           ],
         ),
       ),
+      ),
     );
   }
 }
@@ -104,7 +108,7 @@ class _ResumenTab extends StatelessWidget {
         ref.invalidate(alertasInventarioProvider);
       },
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
         children: [
           Text('Resumen Global del Inventario', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 14),
@@ -137,7 +141,7 @@ class _ResumenTab extends StatelessWidget {
             data: (alertas) {
               if (alertas.isEmpty) {
                 return Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
                   decoration: BoxDecoration(
                     color: Colors.green.withAlpha(15),
                     borderRadius: BorderRadius.circular(12),
@@ -191,7 +195,7 @@ class _TopMaterialesTab extends StatelessWidget {
           }
           final maxVal = materiales.first.totalSalida;
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
             itemCount: materiales.length,
             separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (ctx, i) {
@@ -271,7 +275,7 @@ class _MovimientosTab extends StatelessWidget {
             );
           }
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
             itemCount: movimientos.length,
             separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (ctx, i) {
@@ -340,21 +344,16 @@ class _KpiTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassContainer(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 10, offset: const Offset(0, 4))],
-        border: Border.all(color: color.withAlpha(50)),
-      ),
+      color: Colors.white.withAlpha(180),
       child: Column(
         children: [
           Icon(icon, color: color, size: 28),
           const SizedBox(height: 8),
           Text(value, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: color)),
           const SizedBox(height: 4),
-          Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, color: PremiumGlass.slate500, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -367,17 +366,14 @@ class _AlertaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = alerta.isStockBajo ? Colors.redAccent : Colors.orange;
+    final color = alerta.isStockBajo ? const Color(0xFFEF4444) : const Color(0xFFF59E0B);
     final icon = alerta.isStockBajo ? Icons.warning_amber_rounded : Icons.schedule;
 
-    return Container(
+    return GlassContainer(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withAlpha(10),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withAlpha(70)),
-      ),
+      borderRadius: 16,
+      color: color.withAlpha(18),
       child: Row(
         children: [
           Icon(icon, color: color, size: 20),
@@ -386,8 +382,8 @@ class _AlertaTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(alerta.materialNombre, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                Text(alerta.detalle, style: const TextStyle(fontSize: 11, color: Colors.grey), maxLines: 2, overflow: TextOverflow.ellipsis),
+                Text(alerta.materialNombre, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: PremiumGlass.slate800)),
+                Text(alerta.detalle, style: const TextStyle(fontSize: 11, color: PremiumGlass.slate500), maxLines: 2, overflow: TextOverflow.ellipsis),
               ],
             ),
           ),

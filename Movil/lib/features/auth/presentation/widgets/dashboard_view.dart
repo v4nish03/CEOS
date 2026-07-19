@@ -1,3 +1,4 @@
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
@@ -13,6 +14,7 @@ class DashboardView extends ConsumerWidget {
     final nombre = session.name ?? 'Usuario';
 
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +31,7 @@ class DashboardView extends ConsumerWidget {
           ),
         ],
       ),
-      body: _buildDashboardForRole(role, nombre),
+      body: PremiumBackground(child: _buildDashboardForRole(role, nombre)),
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/request_entity.dart';
 
@@ -24,32 +25,21 @@ class RequestCard extends StatelessWidget {
     String statusText;
 
     if (isPending) {
-      statusColor = Colors.orange;
+      statusColor = const Color(0xFFF59E0B);
       statusIcon = Icons.hourglass_empty;
       statusText = 'Pendiente';
     } else if (isApproved) {
-      statusColor = Colors.green;
+      statusColor = const Color(0xFF22C55E);
       statusIcon = Icons.check_circle;
       statusText = 'Aprobada';
     } else {
-      statusColor = Colors.redAccent;
+      statusColor = const Color(0xFFEF4444);
       statusIcon = Icons.cancel;
       statusText = 'Rechazada';
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: statusColor.withAlpha(100), width: 1.5),
-      ),
+      decoration: PremiumGlass.glassDecoration(borderColor: statusColor.withAlpha(90)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -91,7 +81,7 @@ class RequestCard extends StatelessWidget {
                     children: [
                       Text(
                         request.materialNombre,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: PremiumGlass.slate800, letterSpacing: 0.2),
                       ),
                       const SizedBox(height: 4),
                       if (request.motivo != null && request.motivo!.isNotEmpty)
@@ -137,7 +127,7 @@ class RequestCard extends StatelessWidget {
                     onPressed: () => onReview?.call('APROBADA'),
                     icon: const Icon(Icons.check),
                     label: const Text('Aprobar'),
-                    style: FilledButton.styleFrom(backgroundColor: Colors.green),
+                    style: PremiumGlass.primaryButtonStyle(context).copyWith(backgroundColor: WidgetStateProperty.all(const Color(0xFF22C55E))),
                   ),
                 ],
               ),

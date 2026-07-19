@@ -1,3 +1,4 @@
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +23,7 @@ class MovementsScreen extends ConsumerWidget {
     final movimientosAsync = ref.watch(movimientosProvider);
 
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(
         title: const Text('Movimientos'),
         actions: [
@@ -39,7 +41,8 @@ class MovementsScreen extends ConsumerWidget {
         icon: const Icon(Icons.swap_vert),
         label: const Text('Registrar'),
       ),
-      body: Column(
+      body: PremiumBackground(
+        child: Column(
         children: [
           // Resumen rápido de tipos
           _MovementSummaryBar(),
@@ -84,6 +87,7 @@ class MovementsScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -183,12 +187,9 @@ class _MovementTile extends StatelessWidget {
     final icon = isEntrada ? Icons.add_circle_outline : (isAjuste ? Icons.tune : Icons.remove_circle_outline);
     final prefix = isEntrada ? '+' : (isAjuste ? '±' : '-');
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withAlpha(60)),
-      ),
+    return GlassContainer(
+      padding: EdgeInsets.zero,
+      borderRadius: 16,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         leading: Container(
@@ -201,7 +202,7 @@ class _MovementTile extends StatelessWidget {
         ),
         title: Text(
           'Material #$materialId',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: PremiumGlass.slate800, letterSpacing: 0.2),
         ),
         subtitle: Text(
           fechaStr,

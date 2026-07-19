@@ -1,9 +1,11 @@
 import 'package:ceos/core/constants/app_constants.dart';
+import 'package:ceos/core/permissions/role_permissions.dart';
 import 'package:ceos/core/network/dio_client.dart';
 import 'package:ceos/core/theme/app_theme.dart';
 import 'package:ceos/features/auth/presentation/providers/auth_provider.dart';
 import 'package:ceos/features/gastos/presentation/providers/gastos_provider.dart';
 import 'package:dio/dio.dart';
+import 'package:ceos/core/widgets/premium_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,15 +17,18 @@ class MoreScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(authProvider);
     final role = session.role ?? 'DOCTOR';
-    final canSeeGastos = role == 'SUPERADMIN' || role == 'ADMIN' || role == 'INVENTARIO';
-    final canBackup = role == 'SUPERADMIN' || role == 'ADMIN';
+    final permissions = permissionsForRole(role);
+    final canSeeGastos = permissions.canViewExpenses;
+    final canBackup = permissions.canCreateBackups;
 
     return Scaffold(
+      backgroundColor: PremiumGlass.canvas,
       appBar: AppBar(title: const Text('Más')),
-      body: RefreshIndicator(
+      body: PremiumBackground(
+        child: RefreshIndicator(
         onRefresh: () async => ref.invalidate(gastosTotalProvider),
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
           children: [
             _ProfileHeader(name: session.name ?? 'Usuario', role: role),
             const SizedBox(height: 18),
@@ -67,6 +72,7 @@ class MoreScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -167,7 +173,8 @@ class _GastosSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final totalAsync = ref.watch(gastosTotalProvider);
-    return Card(
+    return GlassContainer(
+      padding: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Row(
@@ -208,7 +215,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 8, top: 4),
-      child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+      child: Text(title, style: const TextStyle(color: PremiumGlass.slate800, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
     );
   }
 }
@@ -224,7 +231,9 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return GlassContainer(
+      padding: EdgeInsets.zero,
+      margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
@@ -232,7 +241,7 @@ class _ActionTile extends StatelessWidget {
           decoration: BoxDecoration(color: color.withAlpha(20), borderRadius: BorderRadius.circular(14)),
           child: Icon(icon, color: color),
         ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, color: PremiumGlass.slate800)),
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
