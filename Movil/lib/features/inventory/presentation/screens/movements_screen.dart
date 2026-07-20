@@ -23,12 +23,16 @@ class MovementsScreen extends ConsumerWidget {
     final movimientosAsync = ref.watch(movimientosProvider);
 
     return Scaffold(
-      backgroundColor: PremiumGlass.canvas,
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Movimientos'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: const Text('Movimientos', style: TextStyle(color: PremiumGlass.slate800, fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: PremiumGlass.slate800),
             tooltip: 'Actualizar',
             onPressed: () => ref.invalidate(movimientosProvider),
           ),
@@ -36,12 +40,11 @@ class MovementsScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showMaterialPicker(context, ref),
-        backgroundColor: AppTheme.ink,
-        foregroundColor: Colors.white,
         icon: const Icon(Icons.swap_vert),
         label: const Text('Registrar'),
       ),
       body: PremiumBackground(
+        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + kToolbarHeight),
         child: Column(
         children: [
           // Resumen rápido de tipos
@@ -77,7 +80,7 @@ class MovementsScreen extends ConsumerWidget {
                 return RefreshIndicator(
                   onRefresh: () async => ref.invalidate(movimientosProvider),
                   child: ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
                     itemCount: movimientos.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 10),
                     itemBuilder: (context, i) => _MovementTile(data: movimientos[i]),
@@ -206,7 +209,7 @@ class _MovementTile extends StatelessWidget {
         ),
         subtitle: Text(
           fechaStr,
-          style: const TextStyle(fontSize: 12, color: AppTheme.slate),
+          style: const TextStyle(fontSize: 12, color: PremiumGlass.slate500),
         ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
